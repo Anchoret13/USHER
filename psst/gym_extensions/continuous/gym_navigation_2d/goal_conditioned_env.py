@@ -95,6 +95,8 @@ class LimitedRangeBasedPOMDPNavigation2DEnv(gym.GoalEnv):
         if self.add_goal_position_to_observation:
             ranges = np.concatenate([ranges, self.destination])
 
+        ranges = np.concatenate([[1 if self.collided else -1], ranges])
+
 
         obs = {'observation': ranges, 
             'achieved_goal': state.copy(),
@@ -120,12 +122,6 @@ class LimitedRangeBasedPOMDPNavigation2DEnv(gym.GoalEnv):
 
     def _step(self, action):
         old_state = self.state.copy()
-        # v = action[0]
-        # theta = action[1]
-        # dx = v*cos(theta)
-        # dy = v*sin(theta)
-
-        # self.state += np.array([dx, dy])
         new_state = self.state + action*self.max_speed
 
         # reward = -1 # minus 1 for every timestep you're not in the goal
@@ -133,25 +129,25 @@ class LimitedRangeBasedPOMDPNavigation2DEnv(gym.GoalEnv):
         done = self._is_close(self.state, self.destination)
         info = {'is_success': done}
 
-        # if np.linalg.norm(self.destination - self.state) < self.destination_tolerance_range:
-        #     reward = 20 # for reaching the goal
-        #     done = True
-
         if not self.world.point_is_in_free_space(new_state[0], new_state[1], epsilon=0.25):
             collision = True
-            reward = -5 # for hitting an obstacle
+            # reward = -5 # for hitting an obstacle
         elif not self.world.segment_is_in_free_space(old_state[0], old_state[1],
                                                    new_state[0], new_state[1],
                                                    epsilon=0.25):
             collision = True
-            reward = -5 # for hitting an obstacle
-        else: 
-            
-            reward = self.compute_reward(self.state, self.destination, None)
+            # reward = -5 # for hitting an obstacle
+        # else: 
+            # reward = self.compute_reward(self.state, self.destination, None)
+            # self.state = new_state
+
+        self.collided = collided or self.collided
+        if not self.collided:
             self.state = new_state
+        reward = self.compute_reward(self.state, self.destination, None)
         
         obs = self._get_observation(self.state)
-        obs['collided'] = collided
+        obs['collided'] = self.collided
         self.observation = obs#['observation']
         return obs, reward, done, info
 
@@ -168,6 +164,7 @@ class LimitedRangeBasedPOMDPNavigation2DEnv(gym.GoalEnv):
         self.goal = self.destination
         # self.destination = np.array([-20,-20])
         # print(self.destination)
+        self.collided = False
         return self._get_observation(self.state)
 
     def _plot_state(self, viewer, state):

@@ -34,6 +34,7 @@ from pomp.example_problems.gym_pendulum_baseenv import PendulumGoalEnv
 from gym.wrappers.time_limit import TimeLimit
 
 import pickle
+from action_randomness_wrapper import ActionRandomnessWrapper
 
 
 """
@@ -84,6 +85,9 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
         env = TimeLimit(FetchPickAndPlaceEnv(), max_episode_steps=50)
     else:
         env = gym.make(args.env_name)
+
+
+    env = ActionRandomnessWrapper(env, args.action_noise)
     # env = TimeLimit(FetchReachEnv(), max_episode_steps=50)
     # env = TimeLimit(FetchPushEnv(), max_episode_steps=50)
     # env = MultiGoalEnvironment("MultiGoalEnvironment", time=time, vel_goal=vel_goal)#, epsilon=.1/4) 
@@ -183,6 +187,10 @@ if __name__ == '__main__':
         agent, run_times = launch(args, time=True, hooks=[], vel_goal=True, seed=False)
         suffix = "_p2p"
     else: 
+        if args.two_goal:
+            from HER_mod.rl_modules.usher_agent import ddpg_agent
+        else:
+            from HER_mod.rl_modules.ddpg_agent import ddpg_agent
         # from HER.rl_modules.sac_agent import ddpg_agent
         agent, run_times = launch(args, time=True, hooks=[], vel_goal=False, seed=False)
         suffix = ""

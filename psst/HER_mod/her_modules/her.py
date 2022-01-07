@@ -41,7 +41,10 @@ class her_sampler:
         future_t = (t_samples + 1 + future_offset)[her_indexes]
         # replace go with achieved goal
         future_ag = episode_batch['ag'][episode_idxs[her_indexes], future_t]
+        transitions['policy_g'] = transitions['g'].copy()
         transitions['g'][her_indexes] = future_ag 
+        # transitions['policy_g'] = transitions['g'].copy()
+
 
         transitions['t']  = future_offset
         self.count += 1
