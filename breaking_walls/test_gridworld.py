@@ -17,6 +17,7 @@ def state_noise(k):
 	return random.sample(noise_samples + [(0,0)]*k)
 
 SUCCESS_CHANCE = .05
+RANDOM_DOOR = 3
 
 transitions = { 
 	EMPTY: lambda last_state, state: state,			#Just move
@@ -86,12 +87,12 @@ class GridworldEnv(GoalEnv):
 		self.state = state
 
 	def get_state(self): 
-		return self.state
+		return (self.state, False)
 
 	def get_obs(self):
 		return {
-			"state": self.state,
-			"observation": self.state,
+			"state": self.get_state(),
+			"observation": self.get_state(),
 			"achieved_goal": self.state,
 			"desired_goal": self.goal,
 		}

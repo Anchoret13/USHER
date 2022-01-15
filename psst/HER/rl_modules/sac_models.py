@@ -129,16 +129,17 @@ class critic(nn.Module):
     def __init__(self, env_params):
         super(critic, self).__init__()
         self.max_action = env_params['action_max']
-        self.norm1 = nn.LayerNorm(env_params['obs'] + env_params['goal'] + env_params['action'])
+        self.goal_dim = env_params['goal']
+        self.norm1 = nn.LayerNorm(env_params['obs'] + 2*env_params['goal'] + env_params['action'])
         self.norm2 = nn.LayerNorm(256)
         self.norm3 = nn.LayerNorm(256)
-        self.fc1 = nn.Linear(env_params['obs'] + env_params['goal'] + env_params['action'], 256)
+        self.fc1 = nn.Linear(env_params['obs'] + 2*env_params['goal'] + env_params['action'], 256)
         self.fc2 = nn.Linear(256, 256)
         self.fc3 = nn.Linear(256, 256)
         self.q_out = nn.Linear(256, 1)
 
     def forward(self, x, actions):
-        x = torch.cat([x, actions / self.max_action], dim=1)
+        x = torch.cat([x, x[...,-self.goal_dim:], actions / self.max_action], dim=1)
         x = self.norm1(x)
         x = torch.clip(x, -clip_max, clip_max)
         x = F.relu(self.fc1(x))

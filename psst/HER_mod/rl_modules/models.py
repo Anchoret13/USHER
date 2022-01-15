@@ -159,14 +159,15 @@ class actor(nn.Module):
 class critic(nn.Module):
     def __init__(self, env_params):
         super(critic, self).__init__()
+        self.goal_dim = env_params['goal']
         self.max_action = env_params['action_max']
-        self.fc1 = nn.Linear(env_params['obs'] + env_params['goal'] + env_params['action'], 256)
+        self.fc1 = nn.Linear(env_params['obs'] + 2*env_params['goal'] + env_params['action'], 256)
         self.fc2 = nn.Linear(256, 256)
         self.fc3 = nn.Linear(256, 256)
         self.q_out = nn.Linear(256, 1)
 
     def forward(self, x, actions):
-        x = torch.cat([x, actions / self.max_action], dim=1)
+        x = torch.cat([x, x[...,-self.goal_dim:], actions / self.max_action], dim=1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))

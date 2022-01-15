@@ -2,16 +2,19 @@ import numpy as np		#type: ignore
 from typing import Tuple, Sequence, Callable, List, Union
 from functools import reduce
 
-from gridworld import create_map_1
+from test_gridworld import create_map_1
 from display import *
 from constants import *
 import pdb
 # from plot import plot
 import matplotlib.pyplot as plt #type: ignore
+from typeguard import typechecked
  
+Obs=Tuple[np.ndarray, bool]
 State=np.ndarray
 Action=np.ndarray
-ActionIndex = int
+ActionIndex = Union[int, np.int64]
+PolicyType = str
 
 def mean(lst):
 	return sum(lst)/len(lst)
@@ -28,13 +31,14 @@ def softmax_sample(arr, temp: float):
 
 env = create_map_1()
 episodes = int(2.5*10**4)
+# episodes = int(1*10**4)
 base_lr = .01
-gamma = .95
+gamma = .9
 
 traj_steps = 50#25
 
-PolicyType = Union["Q", "HER", "USHER"]
 
+# @typechecked
 class Q: 
 	def __init__(self, size: int, compute_reward, default_goal: np.ndarray, k: int = 4):
 		# self.q_table = np.ones((env.size, env.size, 5))
@@ -47,15 +51,16 @@ class Q:
 		self.default_goal = default_goal
 		self.k = k
 		self.p = 1/(1+self.k)
-
-	def sample_action(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray =None, temp=5) -> int:
+	
+	def sample_action(self, state: Obs, goal: np.ndarray, pol_goal: np.ndarray =None, 
+		temp=5) -> ActionIndex:
 		use_pol_goal: np.ndarray = goal if type(pol_goal == None) else pol_goal
 		loc: tuple = tuple(state) + tuple(goal) + tuple(use_pol_goal)
 		q = self.q_table[loc]
 		return softmax_sample(q, temp)
 
-	def argmax_action(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray=None, 
-		policy: PolicyType = "HER") -> int:
+	def argmax_action(self, state: Obs, goal: np.ndarray, pol_goal: np.ndarray=None, 
+		policy: PolicyType = "HER") -> ActionIndex:
 		use_pol_goal = goal if type(pol_goal == None) else pol_goal
 		if policy == "Q":
 			q_table = self.pure_q_table
@@ -69,7 +74,7 @@ class Q:
 	def state_value(self, state: np.ndarray) -> float:
 		return self.q_table[tuple(state) + tuple(self.default_goal) + tuple(self.default_goal)].max()
 
-	def _update_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: int, 
+	def _update_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: ActionIndex, 
 			next_state: np.ndarray, lr: float=.05) -> None:
 
 		reward = 1 if (next_state == goal).all() else 0
@@ -78,7 +83,7 @@ class Q:
 		b = lr*bellman_update
 		self.q_table[tuple(state) + tuple(goal) + tuple(pol_goal) ][action] = a + b
 
-	def _update_g_pi(self, state: np.ndarray, goal: np.ndarray, desired_goal: np.ndarray, action: int, next_state: np.ndarray, lr: float=.05) -> None:
+	def _update_g_pi(self, state: np.ndarray, goal: np.ndarray, desired_goal: np.ndarray, action: ActionIndex, next_state: np.ndarray, lr: float=.05) -> None:
 
 		reward = 1 if (desired_goal == goal).all() else 0
 		bellman_update = (1-gamma)*reward + gamma*self.g_pi_table[tuple(next_state) + tuple(goal)][action]
@@ -86,7 +91,7 @@ class Q:
 		b = lr*bellman_update
 		self.g_pi_table[tuple(state) + tuple(desired_goal)][action] = a + b
 
-	def _update_on_target_usher_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: int, 
+	def _update_on_target_usher_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: ActionIndex, 
 			next_state: np.ndarray, lr: float=.05) -> None:
 
 		reward = 1 if (next_state == goal).all() else 0
@@ -96,7 +101,7 @@ class Q:
 		b = new_lr*bellman_update
 		self.usher_q_table[tuple(state) + tuple(goal) + tuple(pol_goal)][action] = a + b
 
-	def _update_off_target_usher_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: int, 
+	def _update_off_target_usher_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: ActionIndex, 
 			next_state: np.ndarray, lr: float=.05, p=None, t_remaining=None) -> None:
 
 		reward = 1 if (next_state == goal).all() else 0
@@ -120,7 +125,7 @@ class Q:
 		b = new_lr*bellman_update
 		self.usher_q_table[tuple(state) + tuple(goal) + tuple(pol_goal)][action] = a + b
 
-	def _update_usher_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: int, 
+	def _update_usher_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: ActionIndex, 
 			next_state: np.ndarray,  lr: float=.05, p=None, t_remaining=None) -> None:
 
 		reward = 1 if (next_state == goal).all() else 0
@@ -145,7 +150,7 @@ class Q:
 
 
 
-	def _update_pure_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: int, 
+	def _update_pure_q(self, state: np.ndarray, goal: np.ndarray, pol_goal: np.ndarray, action: ActionIndex, 
 			next_state: np.ndarray, lr: float=.05) -> None:
 			#Not updated by HER
 		reward = 1 if (next_state == goal).all() else 0
@@ -209,18 +214,19 @@ index_to_action = {
 }
 
 
-
+# @typechecked
 def observe_transition(env, q: Q, policy: Callable) -> Tuple[State, State, State, ActionIndex, State, float]:
-	state = env.get_state()
+	state = env.get_state()[0]
 	action = policy(state)
 	env_action = index_to_action[action]
 	obs, reward, done, info = env.step(env_action)
 	dg=obs['desired_goal']
 	ag=obs['achieved_goal']
-	next_state=obs['observation']
+	next_state=obs['observation'][0]
 	return (state, dg, ag, action, next_state, reward)
 
 
+# @typechecked
 def observe_episode(env, q: Q, policy: Callable) -> List[Tuple]:
 	env.reset()
 	return [observe_transition(env, q, policy) for _ in range(traj_steps)]
@@ -228,6 +234,7 @@ def observe_episode(env, q: Q, policy: Callable) -> List[Tuple]:
 
 
 # exit()
+# @typechecked
 def learn_q_function(k: int = 4):
 	compute_reward = env.compute_reward
 	default_goal = env.new_goal
@@ -249,6 +256,8 @@ def learn_q_function(k: int = 4):
 	for episode in range(episodes):
 		# draw_grid(env, q)
 		state = env.reset()['observation']
+		state = state[0]
+		assert state.shape==(2,)
 		power = .8
 		lr = (2**(-100*episode/episodes) + base_lr/(episodes**power/100+1))
 		# lr = .1*base_lr*episodes/(.1*episodes + episode)
@@ -279,17 +288,17 @@ def learn_q_function(k: int = 4):
 			ave_r_vals.append(ave_r)	
 
 			#-------------------------------------------------------------------		
-			q_eps = [observe_episode(env, q, lambda s: q.argmax_action(s, default_goal, policy="Q")) for _ in range(50)]
-			ave_q_r = ave_q_r*(1-ave_lr) + ave_lr*mean([get_ave_r(ep) for ep in q_eps])
-			usher_eps = [observe_episode(env, q, lambda s: q.argmax_action(s, default_goal, policy="Q")) for _ in range(50)]
-			ave_usher_r = ave_usher_r*(1-ave_lr) + ave_lr*mean([get_ave_r(ep) for ep in usher_eps])
+			# q_eps = [observe_episode(env, q, lambda s: q.argmax_action(s, default_goal, policy="Q")) for _ in range(50)]
+			# ave_q_r = ave_q_r*(1-ave_lr) + ave_lr*mean([get_ave_r(ep) for ep in q_eps])
+			# usher_eps = [observe_episode(env, q, lambda s: q.argmax_action(s, default_goal, policy="Q")) for _ in range(50)]
+			# ave_usher_r = ave_usher_r*(1-ave_lr) + ave_lr*mean([get_ave_r(ep) for ep in usher_eps])
 			
-			print(f"Average Q return: \t\t{ave_q_r}")
-			print(f"Average USHER return: \t\t{ave_usher_r}")
+			# print(f"Average Q return: \t\t{ave_q_r}")
+			# print(f"Average USHER return: \t\t{ave_usher_r}")
 
 
-			ave_q_r_vals.append(ave_q_r)	
-			ave_usher_r_vals.append(ave_usher_r)	
+			# ave_q_r_vals.append(ave_q_r)	
+			# ave_usher_r_vals.append(ave_usher_r)	
 
 
 		ep = observe_episode(env, q, lambda s: q.sample_action(s, default_goal))
@@ -303,7 +312,7 @@ def learn_q_function(k: int = 4):
 	# }
 
 	plt.plot(iterations, her_vals, 	label="her_vals")
-	# plt.plot(iterations, ave_r_vals,label="ave_r_vals")
+	plt.plot(iterations, ave_r_vals,label="ave_r_vals")
 	plt.plot(iterations, q_vals, 	label="q_vals")
 	plt.plot(iterations, usher_vals,label="usher_vals")
 	plt.legend()
@@ -328,4 +337,4 @@ def show_k_vals():
 	plt.legend()
 	plt.show()
 
-learn_q_function(8)
+learn_q_function(4)

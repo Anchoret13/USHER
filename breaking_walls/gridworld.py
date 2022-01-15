@@ -16,15 +16,20 @@ noise_samples = [(1,0), (-1, 0), (0, 1), (0,1)]
 def state_noise(k):
 	return random.sample(noise_samples + [(0,0)]*k)
 
-SUCCESS_CHANCE = .05
+
+SUCCESS_CHANCE = .1
 
 transitions = { 
-	EMPTY: lambda last_state, state: state,			#Just move
-	BLOCK: lambda last_state, state: last_state,	#Prevent agent from moving
-	WIND:  lambda last_state, state: state + state_noise(4),
+	EMPTY: lambda last_state, state: (state, False),			#Just move
+	BLOCK: lambda last_state, state: (last_state, False),	#Prevent agent from moving
+	WIND:  lambda last_state, state: (state + state_noise(4), False),
 			#Currently does not work because state may be blocked
 			#To fix later
-	RANDOM_DOOR: lambda last_state, state: state if random.random() < SUCCESS_CHANCE else last_state,
+	BREAKING_DOOR: lambda last_state, state: (state, False) if random.random() < SUCCESS_CHANCE \
+		else (last_state, True),
+		# else (last_state, False),
+	NONBREAKING_DOOR: lambda last_state, state: (state, False) if random.random() < SUCCESS_CHANCE \
+		else (last_state, False),
 }
 
 
@@ -57,24 +62,29 @@ class GridworldEnv(GoalEnv):
 		# self.goal = self.new_goal()
 		self.state = self.start
 		self.goal = self.new_goal
+		self.broken = False
 		# self.goal = self.rand_state()
 		return self.get_obs()
 
 	def step(self, action):
 		state = self.state 
-		proposed_next_state = state + action
-		next_state_type = self.grid[tuple(proposed_next_state)]
-		next_state = transitions[next_state_type](state, proposed_next_state)
+		if self.broken: 
+			# assert False
+			return self.get_obs(), self.compute_reward(state, self.goal), False, {}
+		else:
+			proposed_next_state = state + action
+			next_state_type = self.grid[tuple(proposed_next_state)]
+			next_state, broken = transitions[next_state_type](state, proposed_next_state)
 
-		# print(next_state_type)
-		# pdb.set_trace()
+			self.broken = broken
+			# pdb.set_trace()
 
-		if np.abs(state - next_state).sum() > 1.05:
-			pdb.set_trace()
+			if np.abs(state - next_state).sum() > 1.05:
+				pdb.set_trace()
 
-		reward = self.compute_reward(next_state, self.goal)
-		self.state = next_state
-		return self.get_obs(), self.compute_reward(next_state, self.goal), False, {}
+			reward = self.compute_reward(next_state, self.goal)
+			self.state = next_state
+			return self.get_obs(), self.compute_reward(next_state, self.goal), False, {}
 
 	def compute_reward(self, ag, dg):
 		return 1 if (ag == dg).all() else 0
@@ -83,15 +93,16 @@ class GridworldEnv(GoalEnv):
 		return np.array([np.random.randint(0, size), np.random.randint(0, size)])
 
 	def set_state(self, state): 
-		self.state = state
+		self.state = state[0]
+		self.broken = state[1]
 
 	def get_state(self): 
-		return self.state
+		return (self.state, self.broken)
 
 	def get_obs(self):
 		return {
-			"state": self.state,
-			"observation": self.state,
+			"state": (self.state, self.broken),
+			"observation": (self.state, self.broken),
 			"achieved_goal": self.state,
 			"desired_goal": self.goal,
 		}
@@ -112,7 +123,7 @@ def create_map_1():
 		gridworld.grid[i,size//2 ] = BLOCK
 
 
-	gridworld.grid[1,size//2] = RANDOM_DOOR
+	gridworld.grid[1,size//2] = BREAKING_DOOR
 	gridworld.grid[size-2, size//2] = EMPTY
 
 	return gridworld

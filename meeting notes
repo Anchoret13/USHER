@@ -1,0 +1,23 @@
+
+Plot estimation error instead of actual Q value
+
+Plot that shows average reward using learned policy for each method
+	Plot with different values of k
+
+Can you show sampling bias from off-G_\pi goes away if state is discretized?
+
+Look at continuous (turtlebot) case?
+Experiments 
+	Minigrid
+	Turtlebot case?
+
+----------------------------------------------
+
+2 goal convergence proof
+	E[F, GR, GPi \in S] = P(on-goal, S) E[F | on-goal, S] + P(off-goal, S) E[F | off-goal, S]
+		Observe that as the radius of S -> 0, 
+			E[F | on-goal, S] 	-> E[F | on-goal, center(S)]
+			E[F | off-goal, S] 	-> E[F | off-goal, center(S)]
+			P(on-goal, S)		-> P(on-goal,  center(S)) * 1/R^dim(G)
+			P(off-goal, S)		-> P(off-goal, center(S)) * 1/R^(2 dim(G))
+
