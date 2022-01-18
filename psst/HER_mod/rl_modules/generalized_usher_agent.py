@@ -421,7 +421,7 @@ class ddpg_agent:
             else: 
                 actor_loss = -self.critic.min_critic(inputs_norm_tensor_pol, actions_real).mean()
             actor_loss += self.args.action_l2 * (actions_real / self.env_params['action_max']).pow(2).mean()
-            actor_loss -= self.args.entropy_regularization*log_prob.mean()
+            # actor_loss -= self.args.entropy_regularization*log_prob.mean()
             # start to update the network
             self.actor_optim.zero_grad()
             actor_loss.backward()

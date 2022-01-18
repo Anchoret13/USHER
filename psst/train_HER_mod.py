@@ -199,8 +199,8 @@ if __name__ == '__main__':
         if args.two_goal:
             from HER_mod.rl_modules.usher_agent import ddpg_agent
         else:
-            # from HER_mod.rl_modules.ddpg_agent import ddpg_agent
-            from HER_mod.rl_modules.sac import ddpg_agent
+            from HER_mod.rl_modules.ddpg_agent import ddpg_agent
+            # from HER_mod.rl_modules.sac import ddpg_agent
 
 
         # from HER_mod.rl_modules.sac import ddpg_agent
