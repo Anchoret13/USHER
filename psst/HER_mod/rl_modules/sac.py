@@ -12,7 +12,9 @@ from HER.mpi_utils.normalizer import normalizer
 from HER_mod.her_modules.her import her_sampler
 
 from HER_mod.rl_modules.replay_buffer import replay_buffer
-from HER_mod.rl_modules.models import actor, critic
+# from HER_mod.rl_modules.models import actor, critic
+from HER_mod.rl_modules.models import critic
+from HER_mod.rl_modules.sac_models import actor
 # from HER_mod.rl_modules.models import value_prior_actor as actor
 # from HER_mod.rl_modules.models import value_prior_critic as critic
 # from HER.rl_modules.sac_models import actor, critic
@@ -303,9 +305,17 @@ class ddpg_agent:
                 self._soft_update_target_network(self.actor_target_network, self.actor_network)
                 # self._soft_update_target_network(self.critic_target_network, self.critic_network)
             # start to do the evaluation
-            success_rate = self._eval_agent()
+            ev = self._eval_agent()
+            success_rate, ave_first_step = ev['success_rate'], ev['ave_first_step']
+            ave_first_step = [f'{val:.3f}' for val in ave_first_step]
             if MPI.COMM_WORLD.Get_rank() == 0:
-                print('[{}] epoch is: {}, eval success rate is: {:.3f}'.format(datetime.now(), epoch, success_rate))
+                print("NEW VERSION RUNNING")
+                # print(f'[{epoch}] epoch is: {datetime.now()}, eval success rate is: {:.3fsuccess_rate}' )
+                print(f'[{datetime.now()}] epoch is: {epoch}, '
+                    f'eval success rate is: {success_rate:.3f}, '
+                    f'first step: {ave_first_step}, '
+                    # f'average value is: {value:.3f}'
+                    )
                 [hook.run(self) for hook in hooks]
                 # q_value_map(self.critic.min_critic, self.actor_network, title= "HER DDPG value map, epoch " + str(epoch))
                 torch.save([self.o_norm.mean, self.o_norm.std, self.g_norm.mean, self.g_norm.std, self.actor_network.state_dict()], \
@@ -414,12 +424,20 @@ class ddpg_agent:
         self.global_count += 1
         # scale = 1/(1-self.args.gamma)
         if self.global_count % 2 == 0:
-            actions_real = self.actor_network(inputs_norm_tensor)
+            # actions_real = self.actor_network(inputs_norm_tensor)
+            # if train_on_target: 
+            #     actor_loss = -self.critic.min_critic_target(inputs_norm_tensor, actions_real).mean()
+            # else: 
+            #     actor_loss = -self.critic.min_critic(inputs_norm_tensor, actions_real).mean()
+            # actor_loss += self.args.action_l2 * (actions_real / self.env_params['action_max']).pow(2).mean()
+
+            actions_real, log_prob = self.actor_network(inputs_norm_tensor, with_logprob = True)
             if train_on_target: 
                 actor_loss = -self.critic.min_critic_target(inputs_norm_tensor, actions_real).mean()
             else: 
                 actor_loss = -self.critic.min_critic(inputs_norm_tensor, actions_real).mean()
             actor_loss += self.args.action_l2 * (actions_real / self.env_params['action_max']).pow(2).mean()
+            actor_loss -= self.args.entropy_regularization*log_prob.mean()
             # start to update the network
             self.actor_optim.zero_grad()
             actor_loss.backward()
@@ -464,6 +482,7 @@ class ddpg_agent:
 
     def _eval_agent(self, verbose=False):
         total_success_rate = []
+        first_steps = [] #will be np.array by the end
         run_num = self.args.n_test_rollouts
         if verbose: 
             run_num = 1
@@ -485,10 +504,16 @@ class ddpg_agent:
 
             obs = observation['observation']
             g = observation['desired_goal']
+            with torch.no_grad():
+                input_tensor = self._preproc_inputs(obs, g)
+                pi = self.actor_network(input_tensor, deterministic=True)
+                # convert the actions
+                actions = pi.detach().cpu().numpy().squeeze(axis=0)
+                first_steps.append(actions)
             for _ in range(self.env_params['max_timesteps']):
                 with torch.no_grad():
                     input_tensor = self._preproc_inputs(obs, g)
-                    pi = self.actor_network(input_tensor)
+                    pi = self.actor_network(input_tensor, deterministic=True)
                     # convert the actions
                     actions = pi.detach().cpu().numpy().squeeze(axis=0)
                 observation_new, _, done, info = self.env.step(actions)
@@ -506,8 +531,14 @@ class ddpg_agent:
         total_success_rate = np.array(total_success_rate)
         # local_success_rate = np.mean(total_success_rate[:, -1])
         local_success_rate = np.mean(total_success_rate)
-        global_success_rate = MPI.COMM_WORLD.allreduce(local_success_rate, op=MPI.SUM)
-        return global_success_rate / MPI.COMM_WORLD.Get_size()
+        local_first_step = sum(first_steps)/len(first_steps)
+        global_success_rate = MPI.COMM_WORLD.allreduce(local_success_rate, op=MPI.SUM) / MPI.COMM_WORLD.Get_size()
+        global_first_step  = MPI.COMM_WORLD.allreduce(local_first_step , op=MPI.SUM) / MPI.COMM_WORLD.Get_size()
+        result = {
+            'success_rate': global_success_rate, 
+            'ave_first_step': global_first_step, 
+        }
+        return result
 
 
     def get_actions(self, observations, goals):

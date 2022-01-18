@@ -29,13 +29,42 @@
 # 	python -u train_HER_mod.py --env-name=$env_name --noise=$noise $args --two-goal
 # done
 
-env_name='FetchSlide-v1'
-args='--n-epochs=20 --n-test-rollouts=100 --n-cycles=150'
-command="mpirun -np 3 python -u train_HER.py --env-name=$env_name $args"
-for noise in 0 .03 .1 .25 .5
-do 
-	echo "running $noise noise, 1-goal"
-	$command --noise=$noise
-	echo "running $noise noise, 2-goal"
-	$command --noise=$noise --two-goal
-done
+env_name='Gridworld'
+echo "" > "$env_name.txt"
+args='--n-epochs=50 --n-test-rollouts=50 --n-cycles=50 --entropy-regularization=0.1 --gamma=.95'
+# args=' '
+# command="mpirun -np 6 python -u train_HER_mod.py --env-name=$env_name $args"
+command="python -u train_HER_mod.py --env-name=$env_name $args"
+$command --noise=0 --two-goal
+# for noise in 0 .03 .1 .25 .5 1.0
+# do 
+# 	for i in range 4
+# 	do 
+# 		echo "running $env_name, $noise noise, 2-goal"
+# 		$command --noise=$noise --two-goal
+# 	done
+# 	for i in range 4
+# 	do 
+# 		echo "running $env_name, $noise noise, 1-goal"
+# 		$command --noise=$noise
+# 	done
+# done
+
+# env_name='FetchSlide-v1'
+# echo "" > "$env_name.txt"
+# args='--n-epochs=50 --n-test-rollouts=50 --n-cycles=100'
+# # args='--n-epochs=2 --n-test-rollouts=50 --n-cycles=10'
+# for noise in 0 .03 .1 .25 .5
+# do 
+# 	for i in range 4
+# 	do 
+# 		echo "running $env_name, $noise noise, 1-goal"
+# 		$command --noise=$noise
+# 	done
+# 	for i in range 4
+# 	do 
+# 		echo "running $env_name, $noise noise, 2-goal"
+# 		$command --noise=$noise --two-goal
+# 	done
+# done
+

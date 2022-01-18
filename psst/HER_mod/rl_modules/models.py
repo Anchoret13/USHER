@@ -117,7 +117,7 @@ class actor(nn.Module):
         self.fc3 = nn.Linear(256, 256)
         self.action_out = nn.Linear(256, env_params['action'])
 
-    def forward(self, x):
+    def forward(self, x, deterministic=True):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))

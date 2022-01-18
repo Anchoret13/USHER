@@ -24,6 +24,8 @@ from pomp.example_problems.robotics.fetch.push import FetchPushEnv
 from pomp.example_problems.robotics.fetch.slide import FetchSlideEnv
 from pomp.example_problems.robotics.fetch.pick_and_place import FetchPickAndPlaceEnv
 
+from continuous_gridworld import create_map_1
+
 from pomp.example_problems.robotics.hand.reach import HandReachEnv
 
 # from gym_extensions.continuous.gym_navigation_2d.env_generator import Environment, EnvironmentCollection, Obstacle
@@ -40,6 +42,8 @@ from action_randomness_wrapper import ActionRandomnessWrapper
 train the agent, the MPI part code is copy from openai baselines(https://github.com/openai/baselines/blob/master/baselines/her)
 
 """
+
+LOGGING = True
 
 
 def get_env_params(env):
@@ -78,6 +82,8 @@ def launch(args):
         env = TimeLimit(FetchPickAndPlaceEnv(), max_episode_steps=50)
     elif args.env_name == "HandReach":
         env = TimeLimit(HandReachEnv(), max_episode_steps=10)
+    elif args.env_name == "Gridworld" :
+        env = TimeLimit(create_map_1(), max_episode_steps=50)
     else:
         env = gym.make(args.env_name)
 
@@ -150,13 +156,27 @@ if __name__ == '__main__':
 
     agent = launch(args)
 
-    with open("saved_models/her_" + args.env_name + suffix + ".pkl", 'wb') as f:
-        pickle.dump(agent.actor_network, f)
-        print("Saved agent")
+    # with open("saved_models/her_" + args.env_name + suffix + ".pkl", 'wb') as f:
+    #     pickle.dump(agent.actor_network, f)
+    #     print("Saved agent")
 
-    value_estimator = StateValueEstimator(agent.actor_network, agent.critic_network, args.gamma)
+    # value_estimator = StateValueEstimator(agent.actor_network, agent.critic_network, args.gamma)
 
-    with open("saved_models/her_" + args.env_name + "_value" + suffix + ".pkl", 'wb') as f:
-        pickle.dump(value_estimator, f)
-        print("Saved value estimator")
+    # with open("saved_models/her_" + args.env_name + "_value" + suffix + ".pkl", 'wb') as f:
+    #     pickle.dump(value_estimator, f)
+    #     print("Saved value estimator")
 
+
+    
+    n = 10
+    # success_rate, reward, value = ev['success_rate'], ev['reward_rate'], ev['value_rate']
+    success_rate = sum([agent._eval_agent()['success_rate'] for _ in range(n)])/n
+    if LOGGING and MPI.COMM_WORLD.Get_rank() == 0:
+        # pdb.set_trace()
+        log_file_name = f"logging/{args.env_name}.txt"
+        # success_rate = sum([agent._eval_agent()[0] for _ in range(n)])/n
+        text = f"action_noise: {args.action_noise}, \ttwo_goal: {args.two_goal}, \tsuccess_rate: {success_rate}\n"
+        with open(log_file_name, "a") as f:
+            f.write(text)
+
+        print("Log written")
