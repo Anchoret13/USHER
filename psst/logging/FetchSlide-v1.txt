@@ -1,2 +1,17 @@
-action_noise: 0.0, 	two_goal: False, 	success_rate: 0.5533333619435629
-action_noise: 0.0, 	two_goal: False, 	success_rate: 0.5533333619435629
+
+
+running FetchSlide-v1, 0 noise, 2-goal
+
+running FetchSlide-v1, 0 noise, 1-goal
+
+running FetchSlide-v1, .25 noise, 2-goal
+
+running FetchSlide-v1, .25 noise, 1-goal
+
+running FetchSlide-v1, .5 noise, 2-goal
+
+running FetchSlide-v1, .5 noise, 1-goal
+
+running FetchSlide-v1, 1.0 noise, 2-goal
+
+running FetchSlide-v1, 1.0 noise, 1-goal

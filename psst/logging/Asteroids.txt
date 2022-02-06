@@ -1,0 +1,105 @@
+
+running Asteroids, 0 noise, 2-goal ratio
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9964999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 1.0
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.999
+
+running Asteroids, 0 noise, 2-goal
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.893
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9025000000000001
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8745
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8435
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8545
+
+running Asteroids, 0 noise, 1-goal
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.884
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.8404999999999999
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.865
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.874
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.9105000000000001
+
+running Asteroids, .1 noise, 2-goal ratio
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.998
+action_noise: 0.0, 	two_goal: True, 	success_rate: 1.0
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9969999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 1.0
+
+running Asteroids, .1 noise, 2-goal
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8889999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8855000000000001
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8520000000000001
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.844
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8169999999999998
+
+running Asteroids, .1 noise, 1-goal
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.8065
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.8364999999999998
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.9034999999999999
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.8630000000000001
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.8550000000000001
+
+running Asteroids, .25 noise, 2-goal ratio
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9995
+action_noise: 0.0, 	two_goal: True, 	success_rate: 1.0
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9985000000000002
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9984999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.999
+
+running Asteroids, .25 noise, 2-goal
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8795
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8625
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8594999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8215
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8309999999999998
+
+running Asteroids, .25 noise, 1-goal
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.897
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.8909999999999998
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.891
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.8879999999999999
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.9225
+
+running Asteroids, .5 noise, 2-goal ratio
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9984999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9984999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9994999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 1.0
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9995
+
+running Asteroids, .5 noise, 2-goal
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.76
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8360000000000001
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8004999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8275000000000002
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.8264999999999999
+
+running Asteroids, .5 noise, 1-goal
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.766
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.7955
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.7684999999999998
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.819
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.7994999999999999
+
+running Asteroids, 1.0 noise, 2-goal ratio
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 1.0
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9984999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9974999999999999
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.9995
+
+running Asteroids, 1.0 noise, 2-goal
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.5745
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.5725
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.615
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.577
+action_noise: 0.0, 	two_goal: True, 	success_rate: 0.6605000000000001
+
+running Asteroids, 1.0 noise, 1-goal
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.5599999999999999
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.6
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.7074999999999999
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.5115
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.6164999999999999

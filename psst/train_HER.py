@@ -33,6 +33,7 @@ from gym_extensions.continuous.gym_navigation_2d.env_generator import Environmen
 
 from HER_mod.rl_modules.velocity_env import MultiGoalEnvironment, CarEnvironment
 from HER_mod.rl_modules.car_env import *
+from HER_mod.rl_modules.continuous_acrobot import ContinuousAcrobotEnv
 
 import pickle
 
@@ -84,6 +85,8 @@ def launch(args):
         env = TimeLimit(HandReachEnv(), max_episode_steps=10)
     elif args.env_name == "Gridworld" :
         env = TimeLimit(create_map_1(), max_episode_steps=50)
+    elif "ContinuousAcrobot" in args.env_name:
+        env = TimeLimit(ContinuousAcrobotEnv(), max_episode_steps=50)
     else:
         env = gym.make(args.env_name)
 
@@ -131,6 +134,8 @@ if __name__ == '__main__':
     os.environ['IN_MPI'] = '1'
     # get the params
     args = get_args()
+    # print(args)
+    # exit()
 
     if args.p2p: 
         # if "Fetch" in args.env_name:
@@ -141,10 +146,16 @@ if __name__ == '__main__':
         # from HER.rl_modules.tdm_p2p import ddpg_agent
         suffix = "_p2p"
     else: 
-        if args.two_goal:
-            from HER.rl_modules.usher_agent import ddpg_agent
-        else:
-            from HER.rl_modules.sac_agent import ddpg_agent
+        # if args.two_goal:
+        #     from HER.rl_modules.usher_agent import ddpg_agent
+        # else:
+        #     from HER.rl_modules.sac_agent import ddpg_agent
+        # if args.apply_ratio: 
+        #     from HER.rl_modules.generalized_usher_with_ratio_2 import ddpg_agent
+        #     # from HER.rl_modules.generalized_usher_with_ratio import ddpg_agent
+        # else:
+        #     from HER.rl_modules.generalized_usher import ddpg_agent
+        from HER.rl_modules.generalized_usher_with_ratio_2 import ddpg_agent
         # from HER.rl_modules.heuristic_difference_sac_agent import ddpg_agent
         # from HER.rl_modules.value_prior_agent import ddpg_agent
         # from HER.rl_modules.ddpg_agent import ddpg_agent
@@ -170,7 +181,7 @@ if __name__ == '__main__':
     
     n = 10
     # success_rate, reward, value = ev['success_rate'], ev['reward_rate'], ev['value_rate']
-    success_rate = sum([agent._eval_agent()['success_rate'] for _ in range(n)])/n
+    success_rate = sum([agent._eval_agent(final=True)['success_rate'] for _ in range(n)])/n
     if LOGGING and MPI.COMM_WORLD.Get_rank() == 0:
         # pdb.set_trace()
         log_file_name = f"logging/{args.env_name}.txt"

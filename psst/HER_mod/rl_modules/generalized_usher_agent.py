@@ -103,7 +103,10 @@ class ValueEstimator:
         # q_next_value = self.critic_target_network(inputs_next_norm_tensor, actions_next)
         q_next_value = q_next_value.detach()
 
-        target_q_value = r_tensor + self.args.gamma * q_next_value * (-r_tensor)# + 1
+        if self.args.non_terminal_goals: 
+            target_q_value = r_tensor + self.args.gamma * q_next_value 
+        else: 
+            target_q_value = r_tensor + self.args.gamma * q_next_value * (-r_tensor)
         target_q_value = target_q_value.detach()
         # clip the q value
         clip_return = 1 / (1 - self.args.gamma)

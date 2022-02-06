@@ -12,8 +12,7 @@ from HER.mpi_utils.normalizer import normalizer
 from HER_mod.her_modules.her import her_sampler
 
 from HER_mod.rl_modules.replay_buffer import replay_buffer
-# from HER_mod.rl_modules.models import actor
-from HER_mod.rl_modules.sac_models import actor
+from HER_mod.rl_modules.models import actor
 from HER_mod.rl_modules.models import usher_critic as critic
 # from HER_mod.rl_modules.models import value_prior_actor as actor
 # from HER_mod.rl_modules.models import value_prior_critic as critic
@@ -264,6 +263,23 @@ class ddpg_agent:
                         # re-assign the observation
                         obs = obs_new
                         ag = ag_new
+                        # if done: 
+                            # break
+                            # observation = self.env.set_new_goal(random_next_goal)
+                            # # observation = self.env.reset_goal()
+                            # random_next_goal = (np.random.rand(2)*2-1)*POS_LIMIT
+                            # if self.goal_tuning:
+                            #     pos = observation['observation']
+                            #     path = [self.env.goal, random_next_goal]
+                            #     # time, vel_path = self.evaluate_path(pos, path, gd_steps=self.gd_steps)
+                            #     # gd_steps=np.random.geometric(p=.5)
+                            #     time, vel_path = self.evaluate_path(pos, path, gd_steps=self.gd_steps)
+                            #     # time, vel_path = self.evaluate_path(pos, path, gd_steps=gd_steps)
+                            #     target_v = np.clip(vel_path[0].detach().numpy() + np.clip(np.random.standard_normal(2)*.4, -.8, .8), -1, 1)
+
+                            #     self.env.set_new_vel_goal(target_v)
+                            # observation = self.env.get_state()
+                            # g = observation['desired_goal']
 
                     ep_obs.append(obs.copy())
                     ep_ag.append(ag.copy())
@@ -289,18 +305,9 @@ class ddpg_agent:
                 self._soft_update_target_network(self.actor_target_network, self.actor_network)
                 # self._soft_update_target_network(self.critic_target_network, self.critic_network)
             # start to do the evaluation
-
-            ev = self._eval_agent()
-            success_rate, ave_first_step = ev['success_rate'], ev['ave_first_step']
-            ave_first_step = [f'{val:.3f}' for val in ave_first_step]
+            success_rate = self._eval_agent()
             if MPI.COMM_WORLD.Get_rank() == 0:
-                print("NEW VERSION RUNNING")
-                # print(f'[{epoch}] epoch is: {datetime.now()}, eval success rate is: {:.3fsuccess_rate}' )
-                print(f'[{datetime.now()}] epoch is: {epoch}, '
-                    f'eval success rate is: {success_rate:.3f}, '
-                    f'first step: {ave_first_step}, '
-                    # f'average value is: {value:.3f}'
-                    )
+                print('[{}] epoch is: {}, eval success rate is: {:.3f}'.format(datetime.now(), epoch, success_rate))
                 [hook.run(self) for hook in hooks]
                 # q_value_map(self.critic.min_critic, self.actor_network, title= "HER DDPG value map, epoch " + str(epoch))
                 torch.save([self.o_norm.mean, self.o_norm.std, self.g_norm.mean, self.g_norm.std, self.actor_network.state_dict()], \
@@ -415,13 +422,12 @@ class ddpg_agent:
         self.global_count += 1
         # scale = 1/(1-self.args.gamma)
         if self.global_count % 2 == 0:
-            actions_real, log_prob = self.actor_network(inputs_norm_tensor, with_logprob = True)
+            actions_real = self.actor_network(inputs_norm_tensor)
             if train_on_target: 
                 actor_loss = -self.critic.min_critic_target(inputs_norm_tensor_pol, actions_real).mean()
             else: 
                 actor_loss = -self.critic.min_critic(inputs_norm_tensor_pol, actions_real).mean()
             actor_loss += self.args.action_l2 * (actions_real / self.env_params['action_max']).pow(2).mean()
-            actor_loss -= self.args.entropy_regularization*log_prob.mean()
             # start to update the network
             self.actor_optim.zero_grad()
             actor_loss.backward()
@@ -433,9 +439,40 @@ class ddpg_agent:
         self.critic.update(tup, self.actor_target_network, transitions)
 
 
+    # def _update_planning_network(self):
+    #     # sample the episodes
+    #     transitions = self.buffer.sample(self.args.batch_size, off_goal=False)
+    #     # pre-process the observation and goal
+    #     o, o_next, g = transitions['obs'], transitions['obs_next'], transitions['g']
+    #     transitions['obs'], transitions['g'] = self._preproc_og(o, g)
+    #     transitions['obs_next'], transitions['g_next'] = self._preproc_og(o_next, g)
+    #     # start to do the update
+    #     obs_norm = self.o_norm.normalize(transitions['obs'])
+    #     g_norm = self.g_norm.normalize(transitions['g'])
+    #     inputs_norm = np.concatenate([obs_norm, g_norm], axis=1)
+    #     # critic_inputs_norm = np.concatenate([obs_norm, g_norm, g_norm], axis=1)
+    #     obs_next_norm = self.o_norm.normalize(transitions['obs_next'])
+    #     g_next_norm = self.g_norm.normalize(transitions['g_next'])
+    #     inputs_next_norm = np.concatenate([obs_next_norm, g_next_norm], axis=1)
+    #     # critic_inputs_next_norm = np.concatenate([obs_next_norm, g_next_norm, g_next_norm], axis=1)
+    #     # transfer them into the tensor
+    #     inputs_norm_tensor = torch.tensor(inputs_norm, dtype=torch.float32)
+    #     inputs_next_norm_tensor = torch.tensor(inputs_next_norm, dtype=torch.float32)
+
+    #     actions_tensor = torch.tensor(transitions['actions'], dtype=torch.float32)
+    #     r_tensor = torch.tensor(transitions['r'], dtype=torch.float32) 
+    #     if self.args.cuda:
+    #         inputs_norm_tensor = inputs_norm_tensor.cuda()
+    #         inputs_next_norm_tensor = inputs_next_norm_tensor.cuda()
+    #         actions_tensor = actions_tensor.cuda()
+    #         r_tensor = r_tensor.cuda()
+
+
+    #     self.planning_critic.update(inputs_norm_tensor, inputs_next_norm_tensor,  self.actor_target_network, transitions)
+    # do the evaluation
+
     def _eval_agent(self, verbose=False):
         total_success_rate = []
-        first_steps = [] #will be np.array by the end
         run_num = self.args.n_test_rollouts
         if verbose: 
             run_num = 1
@@ -457,16 +494,10 @@ class ddpg_agent:
 
             obs = observation['observation']
             g = observation['desired_goal']
-            with torch.no_grad():
-                input_tensor = self._preproc_inputs(obs, g)
-                pi = self.actor_network(input_tensor, deterministic=True)
-                # convert the actions
-                actions = pi.detach().cpu().numpy().squeeze(axis=0)
-                first_steps.append(actions)
             for _ in range(self.env_params['max_timesteps']):
                 with torch.no_grad():
                     input_tensor = self._preproc_inputs(obs, g)
-                    pi = self.actor_network(input_tensor, deterministic=True)
+                    pi = self.actor_network(input_tensor)
                     # convert the actions
                     actions = pi.detach().cpu().numpy().squeeze(axis=0)
                 observation_new, _, done, info = self.env.step(actions)
@@ -484,11 +515,328 @@ class ddpg_agent:
         total_success_rate = np.array(total_success_rate)
         # local_success_rate = np.mean(total_success_rate[:, -1])
         local_success_rate = np.mean(total_success_rate)
-        local_first_step = sum(first_steps)/len(first_steps)
-        global_success_rate = MPI.COMM_WORLD.allreduce(local_success_rate, op=MPI.SUM) / MPI.COMM_WORLD.Get_size()
-        global_first_step  = MPI.COMM_WORLD.allreduce(local_first_step , op=MPI.SUM) / MPI.COMM_WORLD.Get_size()
-        result = {
-            'success_rate': global_success_rate, 
-            'ave_first_step': global_first_step, 
-        }
-        return result
+        global_success_rate = MPI.COMM_WORLD.allreduce(local_success_rate, op=MPI.SUM)
+        return global_success_rate / MPI.COMM_WORLD.Get_size()
+
+
+    def get_actions(self, observations, goals):
+        obs_norm = self.o_norm.normalize(observations)
+        g_norm = self.g_norm.normalize(goals)
+        inputs_norm = np.concatenate([obs_norm, g_norm], axis=1)
+
+        actions = self.actor_network(torch.tensor(inputs_norm, dtype=torch.float32)).detach().numpy()
+        return actions
+
+    # def q2time(self, q):
+    #     max_q = 1/(1-self.args.gamma)
+    #     ratio = -.99*torch.clip(q/max_q, -1,0) #.99 for numerical stability
+    #     return torch.log(1-ratio)/torch.log(torch.tensor(self.args.gamma))
+
+    def q2time(self, q):
+        # max_q = 1/(1-self.args.gamma)
+        # ratio = -.99*torch.clip(q/max_q, -1,0) #.99 for numerical stability
+        return torch.log(1+q*(1-self.args.gamma)*.99)/torch.log(torch.tensor(self.args.gamma))
+
+    def time2q(self, time):
+        return (1-self.args.gamma**time)/(1-self.args.gamma)
+
+
+    def _eval_path_q_network(self, pos, loc_path, vel_path):
+        if self.vel_goal:
+            path = [torch.cat([loc, vel], dim=-1) for loc, vel, in zip(loc_path, vel_path)]
+        else: 
+            path = loc_path
+        if pos.shape[-1] < 4:
+            prev_loc = np.concatenate([pos, np.zeros(2)]) #Start with 0 velocity
+        else: 
+            prev_loc = pos
+        prev_loc = torch.tensor(prev_loc, dtype=DTYPE)
+        time = 0
+        q = 0
+        for goal in path:
+            if self.normalize:
+                o = self.o_norm.torch_normalize(prev_loc)
+                g = self.g_norm.torch_normalize(goal)
+            else: 
+                o, g = prev_loc, goal
+            # input_tensor = torch.cat([prev_loc, goal], dim=-1).unsqueeze(0)
+            input_tensor = torch.cat([o, g], dim=-1).unsqueeze(0)
+            action = self.actor_network(input_tensor)
+            # time += self.critic.min_critic(input_tensor, action)
+            # time += self.critic.critic_1(input_tensor, action)
+            # time += self.q2time(self.critic.critic_1(input_tensor, action))
+            new_q_val = -self.planning_critic.min_critic_target(input_tensor, action)
+            time += self.q2time(new_q_val).detach()
+            q = q + new_q_val*self.args.gamma**time
+            # time += self.critic.min_critic(input_tensor, action)
+
+            if self.vel_goal:
+                prev_loc = goal
+            else: 
+                prev_loc = np.concatenate([goal, np.zeros(2)])#goal
+                prev_loc = torch.tensor(prev_loc, dtype=DTYPE)
+        # return -time
+        return q
+
+
+
+    def run_path(self, initial_pos, loc_path, vel_path, random_search=False):
+        env = MultiGoalEnvironment("asdf", time=True, vel_goal=False)
+        # obs = initial_pos
+        env.set_state(initial_pos.numpy()[:2], np.zeros(2))
+        obs = env.get_state()['observation']
+        time = 0
+        successful = True
+        trajectory = []
+        hit_points = []
+        goals = []
+        step_num=0
+        for i in range(len(loc_path)): 
+            g = loc_path[i]
+            v = vel_path[i]
+            done = False
+            env.set_new_goal(g.numpy())
+            state = env.get_state()
+            while not done: 
+                obs = torch.tensor(obs, dtype=DTYPE)
+                step_num += 1
+                if self.replan and step_num % self.update_num == 0:
+                    # if i > 0:
+                    #     import pdb
+                    #     pdb.set_trace()
+                    if random_search:
+                        _, vel_path[i:] = self.evaluate_path_random_search(obs, loc_path[i:], gd_steps=self.gd_steps)#, vel_path=vel_path)
+                    else: 
+                        _, vel_path[i:] = self.evaluate_path(obs, loc_path[i:], gd_steps=self.gd_steps)
+                    #g and v should already be normalized
+                if self.normalize:
+                    o = self.o_norm.torch_normalize(obs)
+                    if self.vel_goal:
+                        goal = self.g_norm.torch_normalize(torch.cat([g, v], dim=-1))
+                    else: 
+                        goal = self.g_norm.torch_normalize(g)
+                else: 
+                    o, goal = prev_loc, torch.cat([g, v], dim=-1)
+                # input_tensor = torch.cat([prev_loc, goal], dim=-1).unsqueeze(0)
+                with torch.no_grad():
+                    input_tensor = torch.cat([o, goal], dim=-1).unsqueeze(0)
+                    # input_tensor = torch.cat([obs, g, v], dim=-1)
+                    pi = self.actor_network(input_tensor)
+                    # convert the actions
+                    actions = pi.detach().cpu().numpy().squeeze()
+                observation_new, reward, done, info = env.step(actions)
+                time += 1#reward
+
+                obs = observation_new['observation']
+                if observation_new['collided']: 
+                    time += 50
+                    # done = True
+                    # info['is_success'] = False
+
+                trajectory.append(obs[:2])
+                if done: 
+                    hit_points.append(obs[:2])
+                    goals.append(observation_new['desired_goal'])
+                # per_success_rate.append(info['is_success'])
+            if not info['is_success']: 
+                successful = False
+                break
+
+        return time, trajectory, successful, (hit_points, goals)
+
+
+    def norm_clip(self, vec, max_mag):
+        norm = torch.norm(vec*1.0)
+        if norm > max_mag:
+            return vec*(max_mag/norm.detach())
+        else: 
+            return vec
+
+
+
+    def evaluate_path(self, pos, path, gd_steps=0, random_start=False, vel_path="", last_static=False):
+        # norm_path = [torch.tensor(self.g_norm.normalize(p)) for p in path]
+        loc_path = [torch.tensor(p, dtype=DTYPE) for p in path] #Not doing the normalizing rn bc it's too much hassle
+        if vel_path == "":
+            if random_start: 
+                vel_path = [torch.tensor(.8*(torch.rand(2)*2-1), requires_grad=True) for p in path]
+            else:
+                vel_path = [torch.zeros(2, requires_grad=True) for p in path]
+        # pos = torch.tensor(self.o_norm(pos))]
+        pos = torch.tensor(pos)
+        if gd_steps > 0:
+            if last_static: 
+                velocity_opt = torch.optim.Adam(vel_path[:-1], lr=self.search_lr)#self.args.lr_actor)
+            else:
+                velocity_opt = torch.optim.Adam(vel_path, lr=self.search_lr)
+            # velocity_opt = torch.optim.SGD(vel_path, lr=.05)
+            for i in range(gd_steps):
+                r_max = .8
+                # [torch.clamp(p, min=-r_max, max=r_max) for p in vel_path]
+                for i in range(len(vel_path)):
+                    norm = torch.norm(vel_path[i]).detach()
+                    # if norm > r_max: 
+                    #     vel_path[i].data *= (r_max/norm.detach())
+                # vel_path = [self.norm_clip(v, .8) for v in vel_path]
+                time = self._eval_path_q_network(pos, loc_path, vel_path)
+                velocity_opt.zero_grad()
+                time.backward()
+                # import pdb
+                # pdb.set_trace()
+                velocity_opt.step()
+                with torch.no_grad():
+                    [p.clamp_(min=-r_max, max=r_max) for p in vel_path]
+        else:
+            time = self._eval_path_q_network(pos, loc_path, vel_path)
+
+        # time, trajectory, successful, pass_vals = self.run_path(pos, loc_path, vel_path)
+        # return time, trajectory, vel_path, successful, pass_vals
+        return time, vel_path#, trajectory, vel_path, successful, pass_vals
+
+    def evaluate_path_random_search(self, pos, path, gd_steps=0):
+        loc_path = [torch.tensor(p, dtype=DTYPE) for p in path] #Not doing the normalizing rn bc it's too much hassle
+        pos = torch.tensor(pos)
+        min_time = float("inf")
+        min_vel_path = [torch.zeros(2, dtype=DTYPE) for p in path]
+        time = self._eval_path_q_network(pos, loc_path, min_vel_path)
+
+        for i in range(gd_steps*2):
+            # [torch.clamp(p, min=-.8, max=.8) for p in vel_path]
+            vel_path = [.8*(torch.rand(2)*2-1) for p in path]
+            time = self._eval_path_q_network(pos, loc_path, vel_path)
+            if time < min_time:
+                min_vel_path = vel_path
+                min_time = time
+
+        vel_path = min_vel_path
+        time = self._eval_path_q_network(pos, loc_path, vel_path)
+        return time, vel_path#, trajectory, vel_path, successful, pass_vals
+
+
+    def find_shortest_path(self, pos, goals, gd_steps=0, random_search=False, random_start=False, perm_search=True):
+        min_time = float("inf")
+        min_path = None
+        min_vel_path = None
+        found_success = False
+        last_pass_vals = None
+        old_gd_steps = self.gd_steps
+        self.gd_steps = gd_steps
+        # min_trajectory
+        if perm_search:
+            for path in itertools.permutations(goals):
+                if random_search:
+                    time, vel_path = self.evaluate_path_random_search(pos, path, gd_steps=gd_steps)
+                else:
+                    time, vel_path = self.evaluate_path(pos, path, gd_steps=gd_steps, random_start=random_start)
+
+                if time < min_time:# and successful: 
+                    min_time = time
+                    min_path = path
+                    min_vel_path = vel_path
+        else: 
+            path = goals
+            if random_search:
+                time, vel_path = self.evaluate_path_random_search(pos, path, gd_steps=gd_steps)
+            else:
+                time, vel_path = self.evaluate_path(pos, path, gd_steps=gd_steps, random_start=random_start)
+
+            if time < min_time:# and successful: 
+                min_time = time
+                min_path = path
+                min_vel_path = vel_path
+
+
+        loc_path = [torch.tensor(p, dtype=DTYPE) for p in min_path]
+        time, min_trajectory, successful, last_pass_vals = self.run_path(torch.tensor(pos), loc_path, vel_path, random_search=random_search)
+        self.gd_steps = old_gd_steps
+        found_success = successful
+        return (min_time, min_trajectory, min_path, min_vel_path,  found_success, last_pass_vals)
+
+
+    def find_shortest_path(self, pos, goals, gd_steps=0, random_search=False, random_start=False, perm_search=True):
+        min_time = float("inf")
+        min_path = None
+        min_vel_path = None
+        found_success = False
+        last_pass_vals = None
+        old_gd_steps = self.gd_steps
+        self.gd_steps = gd_steps
+        # min_trajectory
+        if perm_search:
+            for path in itertools.permutations(goals):
+                if random_search:
+                    time, vel_path = self.evaluate_path_random_search(pos, path, gd_steps=gd_steps)
+                else:
+                    time, vel_path = self.evaluate_path(pos, path, gd_steps=gd_steps, random_start=random_start)
+
+                if time < min_time:# and successful: 
+                    min_time = time
+                    min_path = path
+                    min_vel_path = vel_path
+        else: 
+            path = goals
+            if random_search:
+                time, vel_path = self.evaluate_path_random_search(pos, path, gd_steps=gd_steps)
+            else:
+                time, vel_path = self.evaluate_path(pos, path, gd_steps=gd_steps, random_start=random_start)
+
+            if time < min_time:# and successful: 
+                min_time = time
+                min_path = path
+                min_vel_path = vel_path
+
+
+        loc_path = [torch.tensor(p, dtype=DTYPE) for p in min_path]
+        time, min_trajectory, successful, last_pass_vals = self.run_path(torch.tensor(pos), loc_path, vel_path, random_search=random_search)
+        self.gd_steps = old_gd_steps
+        found_success = successful
+        return (min_time, min_trajectory, min_path, min_vel_path,  found_success, last_pass_vals)
+
+
+
+    def select_path(self, pos, goals, method=""):
+        min_time = float("inf")
+        min_path = None
+        min_vel_path = None
+        found_success = False
+        last_pass_vals = None
+        old_gd_steps = self.gd_steps
+        self.gd_steps = 10
+        # ten_gd_steps = 15
+        # min_trajectory
+        path = goals
+        self.replan = False
+        if method == "random search":
+            time, vel_path = self.evaluate_path_random_search(pos, path, gd_steps=self.gd_steps)
+        elif method == "gradient descent":
+            time, vel_path = self.evaluate_path(pos, path, gd_steps=self.gd_steps)
+        elif method == "gradient descent (40 steps)":
+            self.gd_steps = 40
+            time, vel_path = self.evaluate_path(pos, path, gd_steps=self.gd_steps)
+        elif method == "random": 
+            time, vel_path = 0, [torch.rand(2, dtype=DTYPE) for _ in goals]
+        elif method == "0 velocity target": 
+            time, vel_path = 0, [torch.zeros(2, dtype=DTYPE) for _ in goals]
+
+        if "replanning" in method: 
+            self.replanning = True
+
+
+        time, min_trajectory, successful, last_pass_vals = self.run_path(torch.tensor(pos), torch.tensor(goals, dtype=DTYPE), vel_path)
+
+        # if method == "gradient descent":
+        #     import pdb
+        #     pdb.set_trace()
+
+        # print("\n-------------------------------------")
+        # print("Method: " + method)
+        # print("Vel path: " + str(vel_path))
+        # print("Time: " + str(len(min_trajectory)))
+        # len(min_trajectory)
+        # import pdb
+        # pdb.set_trace()
+        
+        self.gd_steps = old_gd_steps
+        found_success = successful
+        return (min_time, min_trajectory, min_path, min_vel_path,  found_success, last_pass_vals)
+

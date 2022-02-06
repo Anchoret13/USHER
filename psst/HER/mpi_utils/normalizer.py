@@ -3,6 +3,26 @@ import numpy as np
 import torch
 from mpi4py import MPI
 
+
+# class torch_normalizer:
+#     def __init__(self, means: np.ndarray, stds: np.ndarray, clip_range: float): 
+#         # self.mean = means
+#         # self.std = stds
+#         self.mean = torch.tensor(means)
+#         self.std = torch.tensor(stds)
+#         self.clip_range = clip_range
+
+#     def normalize(self, v: Tensor) -> NormedTensor: 
+#         clip_range = self.clip_range
+#         if clip_range is None:
+#             clip_range = self.default_clip_range
+#         return NormedTensor(torch.clip((v - self.mean) / (self.std), -clip_range, clip_range))
+#         # return np.clip((v - self.mean) / (self.std), -clip_range, clip_range)
+
+#     def denormalize(self, v: NormedTensor) -> Tensor:
+#         return Tensor(v*self.std + self.mean)
+
+
 class torch_normalizer:
     def __init__(self, means, stds, clip_range): 
         self.mean = means

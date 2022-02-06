@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions.normal import Normal
-
+import pdb
 #CUDA = torch.cuda.is_available()
 #if CUDA:  
 #    gpu_count = torch.cuda.device_count()
@@ -141,6 +141,7 @@ class critic(nn.Module):
         self.q_out = nn.Linear(256, 1)
 
     def forward(self, x, actions):
+        # pdb.set_trace()
         x = torch.cat([x, actions / self.max_action], dim=1)
         x = self.norm1(x)
         x = torch.clip(x, -clip_max, clip_max)
@@ -152,6 +153,92 @@ class critic(nn.Module):
         q_value = self.q_out(x)
 
         return q_value
+
+
+class T_conditioned_ratio_critic(nn.Module):
+    def __init__(self, env_params):
+        super(T_conditioned_ratio_critic, self).__init__()
+        self.env_params = env_params
+        self.max_action = env_params['action_max']
+        input_shape = env_params['obs'] + 2*env_params['goal'] + 1 + env_params['action']
+        self.norm1 = nn.LayerNorm(input_shape)
+        self.norm2 = nn.LayerNorm(256)
+        self.norm3 = nn.LayerNorm(256)
+        self.fc1 = nn.Linear(input_shape, 256)
+        # self.fc1 = nn.Linear(env_params['obs'] + env_params['goal'] + env_params['action'], 256)
+        # self.her_goal_range = (env_params['obs'] + env_params['goal'] -1, env_params['obs'] + 2*env_params['goal']-1)
+        self.her_goal_range = (env_params['obs'] , env_params['obs'] + env_params['goal'])
+        self.fc2 = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(256, 256)
+        self.q_out = nn.Linear(256, 1)
+        self.p_out = nn.Linear(256, 1)
+
+    def forward(self, x, T, actions, return_p=False):
+        mult_val = torch.ones_like(x)
+        new_x = torch.cat([x*mult_val, T, actions / self.max_action], dim=1)
+        assert new_x.shape[0] == x.shape[0] and new_x.shape[-1] == (x.shape[-1] + 1 + self.env_params['action'])
+        x = new_x
+        x = self.norm1(x)
+        x = F.relu(self.fc1(x))
+        x = self.norm2(x)
+        x = F.relu(self.fc2(x))
+        x = self.norm3(x)
+        x = F.relu(self.fc3(x))
+        q_value = self.q_out(x)
+        if return_p: 
+            #exponentiate p to ensure it's non-negative
+            exp = .5 #exponent for p
+            base = 4 #Initially give states small probability. 
+                # If they're not visited, they won't be updated, so they should remain small
+                # States that are visited will grow, which is what we want
+            p_value =  2**(exp*self.p_out(x) - base)
+            # p_value =  self.p_out(x) #+ 1
+            return q_value, p_value
+        else: 
+            return q_value
+
+
+class test_T_conditioned_ratio_critic(nn.Module):
+    def __init__(self, env_params):
+        super(test_T_conditioned_ratio_critic, self).__init__()
+        self.max_action = env_params['action_max']
+        # self.norm1 = nn.LayerNorm(env_params['obs'] + 2*env_params['goal'] + 1 + env_params['action'])
+        # self.norm2 = nn.LayerNorm(256)
+        # self.norm3 = nn.LayerNorm(256)
+        self.fc1 = nn.Linear(env_params['obs'] + 2*env_params['goal'] + 1 + env_params['action'], 256)
+        self.fc2 = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(256, 256)
+        self.q_out = nn.Linear(256, 1)
+        self.p_out = nn.Linear(256, 1)
+
+    # def forward(self, x, actions,  T=0, return_p=False):
+    #     T = torch.zeros(x.shape[:-1] + (1,))
+    def forward(self, x, T, actions, return_p=False):
+        # pdb.set_trace()
+        t_scale = .01
+        x = torch.cat([x, T*t_scale, actions / self.max_action], dim=1)
+        # x = self.norm1(x)
+        # x = torch.clip(x, -clip_max, clip_max)
+        x = F.relu(self.fc1(x))
+        # x = self.norm2(x)
+        x = F.relu(self.fc2(x))
+        # x = self.norm3(x)
+        x = F.relu(self.fc3(x))
+        q_value = self.q_out(x)
+        if return_p: 
+            #exponentiate p to ensure it's non-negative
+            exp = .5 #exponent for p
+            base = 4 #Initially give states small probability. 
+                # If they're not visited, they won't be updated, so they should remain small
+                # States that are visited will grow, which is what we want
+            p_value =  2**(exp*self.p_out(x) - base)
+            # p_value =  self.p_out(x) #+ 1
+            return q_value, p_value
+        else: 
+            return q_value
+
+        # return q_value
+
 
 class dual_critic(nn.Module):
     def __init__(self, env_params):

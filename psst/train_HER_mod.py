@@ -12,6 +12,7 @@ from HER_mod.arguments import get_args
 # from HER.rl_modules.her_ddpg_agent import her_ddpg_agent
 from HER_mod.rl_modules.velocity_env import *
 from HER_mod.rl_modules.car_env import *
+from HER_mod.rl_modules.continuous_acrobot import ContinuousAcrobotEnv
 # from pomp.planners.plantogym import *
 from HER_mod.rl_modules.value_map import *
 from HER_mod.rl_modules.hooks import *
@@ -76,10 +77,10 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
     elif args.env_name == "Car":
         env = CarEnvironment("CarEnvironment", time=True, vel_goal=False)
         # env = TimeLimit(CarEnvironment("CarEnvironment", time=True, vel_goal=False), max_episode_steps=50)
-    elif "Asteroids" in args.env_name:
-        env = TimeLimit(RotationEnv(vel_goal=False), max_episode_steps=50)
     elif "AsteroidsVelGoal" in args.env_name:
         env = TimeLimit(RotationEnv(vel_goal=True), max_episode_steps=50)
+    elif "Asteroids" in args.env_name:
+        env = TimeLimit(RotationEnv(vel_goal=False), max_episode_steps=50)
     elif args.env_name == "PendulumGoal":
         env = TimeLimit(PendulumGoalEnv(g=9.8), max_episode_steps=200)
     elif "FetchReach" in args.env_name:
@@ -91,7 +92,9 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
     elif "FetchPickAndPlace" in args.env_name:
         env = TimeLimit(FetchPickAndPlaceEnv(), max_episode_steps=50)
     elif args.env_name == "Gridworld" :
-        env = TimeLimit(create_map_1(), max_episode_steps=50)
+        env = TimeLimit(create_map_1(), max_episode_steps=20)
+    elif "ContinuousAcrobot" in args.env_name:
+        env = TimeLimit(ContinuousAcrobotEnv(), max_episode_steps=50)
     else:
         env = gym.make(args.env_name)
 
@@ -196,11 +199,17 @@ if __name__ == '__main__':
         agent, run_times = launch(args, time=True, hooks=[], vel_goal=True, seed=False)
         suffix = "_p2p"
     else: 
-        if args.two_goal:
-            from HER_mod.rl_modules.usher_agent import ddpg_agent
+        # if args.two_goal:
+        #     # from HER_mod.rl_modules.usher_agent import ddpg_agent
+        #     from HER_mod.rl_modules.two_goal_usher import ddpg_agent
+        # else:
+        #     # from HER_mod.rl_modules.ddpg_agent import ddpg_agent
+        #     from HER_mod.rl_modules.sac import ddpg_agent
+        if args.apply_ratio: 
+            # from HER_mod.rl_modules.true_ratio_two_goal_usher import ddpg_agent
+            from HER_mod.rl_modules.t_conditioned_two_goal_usher import ddpg_agent
         else:
-            from HER_mod.rl_modules.ddpg_agent import ddpg_agent
-            # from HER_mod.rl_modules.sac import ddpg_agent
+            from HER_mod.rl_modules.two_goal_usher import ddpg_agent
 
 
         # from HER_mod.rl_modules.sac import ddpg_agent
@@ -234,12 +243,21 @@ if __name__ == '__main__':
     
     n = 10
     # success_rate = sum([agent._eval_agent() for _ in range(n)])/n
-    success_rate = sum([agent._eval_agent()['success_rate'] for _ in range(n)])/n
+    evs = [agent._eval_agent() for _ in range(n)]
+    success_rate = sum([evs[i]['success_rate'] for i in range(n)])/n
+    reward_rate = sum([evs[i]['reward_rate'] for i in range(n)])/n
+    value_rate = sum([evs[i]['value_rate'] for i in range(n)])/n
     if LOGGING and MPI.COMM_WORLD.Get_rank() == 0:
         # pdb.set_trace()
         log_file_name = f"logging/{args.env_name}.txt"
         # success_rate = sum([agent._eval_agent()[0] for _ in range(n)])/n
-        text = f"action_noise: {args.action_noise}, \ttwo_goal: {args.two_goal}, \tsuccess_rate: {success_rate}\n"
+        text = f"action_noise: {args.action_noise}, "   
+        text +=f"\ttwo_goal: {args.two_goal}, \n"            
+        text +=f"\tsuccess_rate: {success_rate}\n"         
+        text +=f"\taverage_reward: {reward_rate}\n"        
+        text +=f"\taverage_initial_value: {value_rate}\n"  
+        text +="\n"
+
         with open(log_file_name, "a") as f:
             f.write(text)
 

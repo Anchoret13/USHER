@@ -29,8 +29,8 @@ def get_args():
     parser.add_argument('--entropy-regularization', type=float, default=0.01, help='entropy-regularization factor (alpha) for sac')
     # parser.add_argument('--gamma', type=float, default=0.98, help='the discount factor')
     parser.add_argument('--gamma', type=float, default=0.98, help='the discount factor')
-    # parser.add_argument('--action-l2', type=float, default=1, help='l2 reg')
-    parser.add_argument('--action-l2', type=float, default=.001, help='l2 reg')
+    parser.add_argument('--action-l2', type=float, default=1, help='l2 reg')
+    # parser.add_argument('--action-l2', type=float, default=.001, help='l2 reg')
     parser.add_argument('--lr-actor', type=float, default=0.001, help='the learning rate of the actor')
     parser.add_argument('--lr-critic', type=float, default=0.001, help='the learning rate of the critic')
     parser.add_argument('--polyak', type=float, default=0.95, help='the average coefficient')
@@ -45,6 +45,8 @@ def get_args():
     parser.add_argument('--off-goal', type=float, default=0.1, help='the discount factor')
     parser.add_argument('--action-noise', type=float, default=0., help='randomness applied directly to action')
     parser.add_argument('--two-goal', action='store_true', help='whether to use USHERs 2-goal policy instead of the standard 1-goal')
+    parser.add_argument('--apply-ratio', action='store_true', help='whether to use USHERs ratio weighting')
+    parser.add_argument('--ratio-offset', type=float, default=0.1, help='offset of ratio used in correcting HER values')
 
     args = parser.parse_args()
 

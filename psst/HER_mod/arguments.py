@@ -39,9 +39,13 @@ def get_args():
     parser.add_argument('--p2p', action='store_true', help='if this is training a point-to-point policy')
     parser.add_argument('--num-rollouts-per-mpi', type=int, default=2, help='the rollouts per mpi')
 
+    parser.add_argument('--non-terminal-goals', action='store_true', help='achieving the goal should not end the episode')
     parser.add_argument('--off-goal', type=float, default=0.1, help='the discount factor')
     parser.add_argument('--action-noise', type=float, default=0., help='randomness applied directly to action')
+    parser.add_argument('--apply-ratio', action='store_true', help='whether to use USHERs ratio weighting')
     parser.add_argument('--two-goal', action='store_true', help='whether to use USHERs 2-goal  policy instead of the standard 1-goal')
+    parser.add_argument('--ratio-offset', type=float, default=0.1, help='offset of ratio used in correcting HER values')
+
 
     args = parser.parse_args()
 

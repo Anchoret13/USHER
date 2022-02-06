@@ -1,0 +1,97 @@
+command="python train_HER_mod.py --env-name=Gridworld --gamma=.75 --replay-k=8 --n-epochs=10 --entropy-regularization=0.1"
+
+running Gridworld,  noise, 1-goal
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.27
+	average_reward: -3.548592096340763
+	average_initial_value: -2.819667067527771
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.22000000000000003
+	average_reward: -3.6287482330764314
+	average_initial_value: -2.8686529207229614
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.19
+	average_reward: -3.696248165117833
+	average_initial_value: -3.091446764469147
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.29000000000000004
+	average_reward: -3.4993733916464955
+	average_initial_value: -2.939013566970825
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.22999999999999998
+	average_reward: -3.6371857557292975
+	average_initial_value: -2.8129398727417
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.24
+	average_reward: -3.594998278382164
+	average_initial_value: -2.978129758834839
+
+
+running Gridworld,  noise, 2-goal
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.25000000000000006
+	average_reward: -3.6118733010350303
+	average_initial_value: -3.532185459136963
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.24
+	average_reward: -3.594998278382164
+	average_initial_value: -3.055300533771515
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.24000000000000005
+	average_reward: -3.6371857783821637
+	average_initial_value: -3.3478503990173336
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.18
+	average_reward: -3.7204400369962167
+	average_initial_value: -3.509172291755676
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.26
+	average_reward: -3.670935823687897
+	average_initial_value: -3.759644255638123
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.18
+	average_reward: -3.7162872049649662
+	average_initial_value: -3.446918604373932
+
+
+running Gridworld,  noise, 2-goal, with (ad-hoc, not correct) ratio
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 1.0
+	average_reward: -3.29698486328125
+	average_initial_value: -3.449402227401733
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 1.0
+	average_reward: -3.295205078125
+	average_initial_value: -3.3548649168014526
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 1.0
+	average_reward: -3.2898657226562498
+	average_initial_value: -3.3348502659797674
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.24000000000000005
+	average_reward: -3.669881090882164
+	average_initial_value: -3.8258963155746466
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.15
+	average_reward: -3.7837212190376177
+	average_initial_value: -3.8274704456329345
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.99
+	average_reward: -3.2987646257846337
+	average_initial_value: -3.366428771018982
+
