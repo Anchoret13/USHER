@@ -1,0 +1,17 @@
+AsteroidsRandomBlockyGridworld
+
+agent="train_HER_mod.py"
+offset=".05"
+args='--replay-k=16 --entropy-regularization=0.05 --n-test-rollouts=10'
+
+NONBREAKING_FAILURE_CHANCE = .6
+HIGH_FAILURE_CHANCE = .3
+LOW_FAILURE_CHANCE = HIGH_FAILURE_CHANCE/3
+
+break_chance = 0.0#.6
+obstacle_density = .2
+
+RandomBlocky
+
+assign_blocks(NONBREAKING_DOOR, block_fraction)
+assign_blocks(BREAKING_DOOR, block_fraction)

@@ -1,0 +1,223 @@
+
+
+running RandomGridworld, 0 noise, 2-goal ratio with .11 offset
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.7035999999999996
+	average_reward: -2.732405544531027
+	average_initial_value: -2.586597482776643
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.69
+	average_reward: -2.7630169724497766
+	average_initial_value: -2.4977226671695707
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.685
+	average_reward: -2.7943435873261104
+	average_initial_value: -2.5570235155105596
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.6813999999999997
+	average_reward: -2.8029243630955243
+	average_initial_value: -2.6022241432666773
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.6993999999999998
+	average_reward: -2.7454832039927326
+	average_initial_value: -2.5857926329851155
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.6951999999999999
+	average_reward: -2.75691570107127
+	average_initial_value: -2.5607553347349166
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.7051999999999997
+	average_reward: -2.7293960501187424
+	average_initial_value: -2.5456102763175963
+
+
+running RandomGridworld, 0 noise, 1-goal
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.6831999999999998
+	average_reward: -2.791983349975204
+	average_initial_value: -2.3256246189117435
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.6856000000000002
+	average_reward: -2.7873079276943584
+	average_initial_value: -2.293176224088669
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.6801999999999998
+	average_reward: -2.7874072605279903
+	average_initial_value: -2.21227946805954
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.6747999999999997
+	average_reward: -2.8259679221531786
+	average_initial_value: -2.163676713609696
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.6935999999999996
+	average_reward: -2.7581059716870664
+	average_initial_value: -2.2261475301742557
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.6893999999999997
+	average_reward: -2.7755745019699356
+	average_initial_value: -2.2485714090585702
+
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.6752000000000001
+	average_reward: -2.7924249192187114
+	average_initial_value: -2.185351927518844
+
+
+running RandomGridworld, .1 noise, 2-goal ratio with .11 offset
+action_noise: 0.1, 	two_goal: True, 
+	success_rate: 0.6673999999999998
+	average_reward: -2.9085497633239292
+	average_initial_value: -2.8265844457626343
+
+action_noise: 0.1, 	two_goal: True, 
+	success_rate: 0.6789999999999999
+	average_reward: -2.837594108735202
+	average_initial_value: -2.641234901046752
+
+action_noise: 0.1, 	two_goal: True, 
+	success_rate: 0.6446
+	average_reward: -2.9210178755983343
+	average_initial_value: -2.7019890783309943
+
+action_noise: 0.1, 	two_goal: True, 
+	success_rate: 0.6809999999999999
+	average_reward: -2.8157551061371815
+	average_initial_value: -2.8485563952445987
+
+action_noise: 0.1, 	two_goal: True, 
+	success_rate: 0.6942
+	average_reward: -2.816832284190651
+	average_initial_value: -2.8593360393285745
+
+action_noise: 0.1, 	two_goal: True, 
+	success_rate: 0.675
+	average_reward: -2.8247541279815516
+	average_initial_value: -2.9325623501300813
+
+action_noise: 0.1, 	two_goal: True, 
+	success_rate: 0.6808
+	average_reward: -2.820513420536457
+	average_initial_value: -2.671267127656937
+
+
+running RandomGridworld, .1 noise, 1-goal
+action_noise: 0.1, 	two_goal: False, 
+	success_rate: 0.6552000000000001
+	average_reward: -2.8710057981238135
+	average_initial_value: -2.2452785559177393
+
+action_noise: 0.1, 	two_goal: False, 
+	success_rate: 0.6499999999999997
+	average_reward: -2.8961843214893004
+	average_initial_value: -2.3376599233627333
+
+action_noise: 0.1, 	two_goal: False, 
+	success_rate: 0.6576000000000001
+	average_reward: -2.8720530570803224
+	average_initial_value: -2.1195084076642994
+
+action_noise: 0.1, 	two_goal: False, 
+	success_rate: 0.6557999999999997
+	average_reward: -2.8842062807291704
+	average_initial_value: -2.480234464526176
+
+action_noise: 0.1, 	two_goal: False, 
+	success_rate: 0.6535999999999997
+	average_reward: -2.8687940929877787
+	average_initial_value: -2.173801855373383
+
+action_noise: 0.1, 	two_goal: False, 
+	success_rate: 0.6631999999999998
+	average_reward: -2.8663389788136975
+	average_initial_value: -2.319873004245758
+
+action_noise: 0.1, 	two_goal: False, 
+	success_rate: 0.6547999999999999
+	average_reward: -2.887390124118615
+	average_initial_value: -2.1814333301305773
+
+
+running RandomGridworld, .25 noise, 2-goal ratio with .11 offset
+action_noise: 0.25, 	two_goal: True, 
+	success_rate: 0.6303999999999997
+	average_reward: -3.103192461329391
+	average_initial_value: -2.9544462239265443
+
+action_noise: 0.25, 	two_goal: True, 
+	success_rate: 0.6143999999999995
+	average_reward: -3.170187118365785
+	average_initial_value: -3.0654409884452813
+
+action_noise: 0.25, 	two_goal: True, 
+	success_rate: 0.6096
+	average_reward: -3.1433031398606666
+	average_initial_value: -2.8253938595771775
+
+action_noise: 0.25, 	two_goal: True, 
+	success_rate: 0.6164000000000001
+	average_reward: -3.2247212043787954
+	average_initial_value: -3.154174550247193
+
+action_noise: 0.25, 	two_goal: True, 
+	success_rate: 0.6214
+	average_reward: -3.0979576345504904
+	average_initial_value: -3.072174077796937
+
+action_noise: 0.25, 	two_goal: True, 
+	success_rate: 0.6133999999999997
+	average_reward: -3.100584375793468
+	average_initial_value: -3.082834944176674
+
+action_noise: 0.25, 	two_goal: True, 
+	success_rate: 0.6223999999999996
+	average_reward: -3.127897847149646
+	average_initial_value: -3.0536211719989774
+
+
+running RandomGridworld, .25 noise, 1-goal
+action_noise: 0.25, 	two_goal: False, 
+	success_rate: 0.6087999999999999
+	average_reward: -3.163923601490871
+	average_initial_value: -2.336291880345345
+
+action_noise: 0.25, 	two_goal: False, 
+	success_rate: 0.611
+	average_reward: -3.152971893768412
+	average_initial_value: -2.4456212124109267
+
+action_noise: 0.25, 	two_goal: False, 
+	success_rate: 0.6134000000000001
+	average_reward: -3.0963248706984334
+	average_initial_value: -2.2964070661544795
+
+action_noise: 0.25, 	two_goal: False, 
+	success_rate: 0.6148000000000001
+	average_reward: -3.1599188656625636
+	average_initial_value: -2.333670577287674
+
+action_noise: 0.25, 	two_goal: False, 
+	success_rate: 0.6141999999999997
+	average_reward: -3.1146282735254296
+	average_initial_value: -2.4451470803499227
+
+action_noise: 0.25, 	two_goal: False, 
+	success_rate: 0.6151999999999997
+	average_reward: -3.1132221136837255
+	average_initial_value: -2.4866854516744605
+
+action_noise: 0.25, 	two_goal: False, 
+	success_rate: 0.6043999999999998
+	average_reward: -3.0846931545128133
+	average_initial_value: -2.4092543195962897
+

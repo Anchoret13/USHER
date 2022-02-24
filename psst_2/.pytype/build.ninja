@@ -1,0 +1,9 @@
+rule infer
+  command = /home/liam/anaconda3/bin/python -m pytype.single --imports_info $imports --module-name $module -V 3.7 -o $out --no-report-errors --nofail --quick $in
+  description = infer $module
+rule check
+  command = /home/liam/anaconda3/bin/python -m pytype.single --imports_info $imports --module-name $module -V 3.7 -o $out --analyze-annotated --nofail --quick $in
+  description = check $module
+build /home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/rl_modules/typed_usher_with_ratio.pyi: check /home/liam/Desktop/usher_repo/USHER/psst/HER/rl_modules/typed_usher_with_ratio.py
+  imports = /home/liam/Desktop/usher_repo/USHER/psst/.pytype/imports/rl_modules.typed_usher_with_ratio.imports
+  module = rl_modules.typed_usher_with_ratio

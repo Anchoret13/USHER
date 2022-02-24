@@ -1,0 +1,3 @@
+
+
+running AsteroidsRandomGridworld, 0 noise, 2-goal ratio with .11 offset

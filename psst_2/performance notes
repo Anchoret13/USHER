@@ -1,0 +1,168 @@
+running 0 noise, 1-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-07 21:11:39.838164] epoch is: 0, eval success rate is: 0.110, average reward is: -181.970, average value is: -6.947
+[2022-01-07 21:21:07.093051] epoch is: 1, eval success rate is: 0.210, average reward is: -167.500, average value is: -11.046
+[2022-01-07 21:31:03.173611] epoch is: 2, eval success rate is: 0.410, average reward is: -141.920, average value is: -12.928
+[2022-01-07 21:43:17.561316] epoch is: 3, eval success rate is: 0.580, average reward is: -112.610, average value is: -9.842
+[2022-01-07 21:57:20.210668] epoch is: 4, eval success rate is: 0.520, average reward is: -115.180, average value is: -7.767
+[2022-01-07 22:12:29.772967] epoch is: 5, eval success rate is: 0.640, average reward is: -101.510, average value is: -5.895
+[2022-01-07 22:28:07.504237] epoch is: 6, eval success rate is: 0.540, average reward is: -112.490, average value is: -5.026
+[2022-01-07 22:43:54.812059] epoch is: 7, eval success rate is: 0.590, average reward is: -103.290, average value is: -4.320
+[2022-01-07 23:00:21.674429] epoch is: 8, eval success rate is: 0.570, average reward is: -108.600, average value is: -4.036
+[2022-01-07 23:17:18.268922] epoch is: 9, eval success rate is: 0.460, average reward is: -124.900, average value is: -3.834
+Saved agent
+Saved value estimator
+running 0 noise, 2-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-07 23:26:37.710173] epoch is: 0, eval success rate is: 0.100, average reward is: -187.050, average value is: -7.172
+[2022-01-07 23:36:27.920674] epoch is: 1, eval success rate is: 0.200, average reward is: -171.720, average value is: -11.386
+[2022-01-07 23:45:50.892293] epoch is: 2, eval success rate is: 0.190, average reward is: -170.100, average value is: -15.350
+[2022-01-07 23:57:51.256804] epoch is: 3, eval success rate is: 0.380, average reward is: -139.980, average value is: -13.759
+[2022-01-08 00:12:14.354039] epoch is: 4, eval success rate is: 0.430, average reward is: -127.800, average value is: -9.238
+[2022-01-08 00:27:34.734823] epoch is: 5, eval success rate is: 0.570, average reward is: -113.560, average value is: -7.971
+[2022-01-08 00:43:08.931306] epoch is: 6, eval success rate is: 0.430, average reward is: -128.950, average value is: -7.897
+[2022-01-08 00:59:18.928107] epoch is: 7, eval success rate is: 0.480, average reward is: -119.880, average value is: -5.333
+[2022-01-08 01:15:52.262715] epoch is: 8, eval success rate is: 0.380, average reward is: -135.170, average value is: -5.315
+[2022-01-08 01:32:32.770500] epoch is: 9, eval success rate is: 0.430, average reward is: -129.690, average value is: -5.088
+Saved agent
+Saved value estimator
+running .03 noise, 1-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-08 01:43:29.177858] epoch is: 0, eval success rate is: 0.290, average reward is: -160.810, average value is: -5.946
+[2022-01-08 01:53:10.552996] epoch is: 1, eval success rate is: 0.210, average reward is: -169.250, average value is: -11.191
+[2022-01-08 02:02:27.192957] epoch is: 2, eval success rate is: 0.190, average reward is: -168.280, average value is: -15.160
+[2022-01-08 02:14:00.729639] epoch is: 3, eval success rate is: 0.510, average reward is: -120.790, average value is: -10.908
+[2022-01-08 02:27:44.731327] epoch is: 4, eval success rate is: 0.530, average reward is: -114.720, average value is: -11.697
+[2022-01-08 02:42:35.460749] epoch is: 5, eval success rate is: 0.500, average reward is: -118.640, average value is: -6.840
+[2022-01-08 02:58:02.979453] epoch is: 6, eval success rate is: 0.470, average reward is: -124.130, average value is: -6.629
+[2022-01-08 03:14:17.997910] epoch is: 7, eval success rate is: 0.560, average reward is: -108.300, average value is: -4.329
+[2022-01-08 03:30:45.918760] epoch is: 8, eval success rate is: 0.480, average reward is: -120.450, average value is: -4.311
+[2022-01-08 03:47:13.727336] epoch is: 9, eval success rate is: 0.390, average reward is: -134.460, average value is: -3.992
+Saved agent
+Saved value estimator
+running .03 noise, 2-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-08 03:56:29.506596] epoch is: 0, eval success rate is: 0.180, average reward is: -169.870, average value is: -6.330
+[2022-01-08 04:05:30.182308] epoch is: 1, eval success rate is: 0.140, average reward is: -176.880, average value is: -11.875
+[2022-01-08 04:14:45.141105] epoch is: 2, eval success rate is: 0.280, average reward is: -156.380, average value is: -14.406
+[2022-01-08 04:25:12.131717] epoch is: 3, eval success rate is: 0.390, average reward is: -135.840, average value is: -13.869
+[2022-01-08 04:37:09.866327] epoch is: 4, eval success rate is: 0.500, average reward is: -118.610, average value is: -13.537
+[2022-01-08 04:50:40.678347] epoch is: 5, eval success rate is: 0.480, average reward is: -121.040, average value is: -11.624
+[2022-01-08 05:06:09.015795] epoch is: 6, eval success rate is: 0.610, average reward is: -102.280, average value is: -6.032
+[2022-01-08 05:22:06.539864] epoch is: 7, eval success rate is: 0.600, average reward is: -102.670, average value is: -5.171
+[2022-01-08 05:38:26.344814] epoch is: 8, eval success rate is: 0.600, average reward is: -103.740, average value is: -5.062
+[2022-01-08 05:55:10.528767] epoch is: 9, eval success rate is: 0.470, average reward is: -123.210, average value is: -4.932
+Saved agent
+Saved value estimator
+running .1 noise, 1-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-08 06:04:11.244624] epoch is: 0, eval success rate is: 0.120, average reward is: -180.080, average value is: -6.955
+[2022-01-08 06:14:23.162768] epoch is: 1, eval success rate is: 0.220, average reward is: -165.860, average value is: -10.586
+[2022-01-08 06:24:11.716147] epoch is: 2, eval success rate is: 0.250, average reward is: -168.110, average value is: -15.021
+[2022-01-08 06:35:22.930423] epoch is: 3, eval success rate is: 0.350, average reward is: -141.330, average value is: -13.796
+[2022-01-08 06:48:42.832907] epoch is: 4, eval success rate is: 0.420, average reward is: -127.070, average value is: -9.624
+[2022-01-08 07:02:41.949606] epoch is: 5, eval success rate is: 0.510, average reward is: -116.280, average value is: -8.933
+[2022-01-08 07:17:59.869818] epoch is: 6, eval success rate is: 0.430, average reward is: -127.730, average value is: -6.429
+[2022-01-08 07:34:05.909438] epoch is: 7, eval success rate is: 0.560, average reward is: -108.320, average value is: -4.650
+[2022-01-08 07:50:25.368123] epoch is: 8, eval success rate is: 0.530, average reward is: -116.880, average value is: -4.632
+[2022-01-08 08:06:45.585861] epoch is: 9, eval success rate is: 0.440, average reward is: -128.650, average value is: -4.225
+Saved agent
+Saved value estimator
+running .1 noise, 2-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-08 08:15:25.198026] epoch is: 0, eval success rate is: 0.130, average reward is: -179.630, average value is: -6.786
+[2022-01-08 08:23:48.367426] epoch is: 1, eval success rate is: 0.140, average reward is: -177.370, average value is: -11.545
+[2022-01-08 08:34:01.488589] epoch is: 2, eval success rate is: 0.370, average reward is: -148.870, average value is: -12.154
+[2022-01-08 08:46:01.405986] epoch is: 3, eval success rate is: 0.370, average reward is: -137.300, average value is: -10.031
+[2022-01-08 09:00:30.155508] epoch is: 4, eval success rate is: 0.440, average reward is: -124.760, average value is: -6.695
+[2022-01-08 09:16:07.142906] epoch is: 5, eval success rate is: 0.490, average reward is: -120.180, average value is: -6.166
+[2022-01-08 09:31:56.248006] epoch is: 6, eval success rate is: 0.420, average reward is: -129.470, average value is: -5.514
+[2022-01-08 09:47:56.527431] epoch is: 7, eval success rate is: 0.500, average reward is: -115.610, average value is: -4.653
+[2022-01-08 10:04:20.745753] epoch is: 8, eval success rate is: 0.400, average reward is: -133.140, average value is: -4.716
+[2022-01-08 10:20:55.496102] epoch is: 9, eval success rate is: 0.360, average reward is: -139.100, average value is: -4.457
+Saved agent
+Saved value estimator
+running .25 noise, 1-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-08 10:30:44.340367] epoch is: 0, eval success rate is: 0.130, average reward is: -174.410, average value is: -6.425
+[2022-01-08 10:41:02.785268] epoch is: 1, eval success rate is: 0.260, average reward is: -164.980, average value is: -10.763
+[2022-01-08 10:51:36.599974] epoch is: 2, eval success rate is: 0.220, average reward is: -163.760, average value is: -13.775
+[2022-01-08 11:02:46.054610] epoch is: 3, eval success rate is: 0.370, average reward is: -138.560, average value is: -12.782
+[2022-01-08 11:16:31.910580] epoch is: 4, eval success rate is: 0.440, average reward is: -127.380, average value is: -9.835
+[2022-01-08 11:32:00.854071] epoch is: 5, eval success rate is: 0.390, average reward is: -133.750, average value is: -6.656
+[2022-01-08 11:47:31.274782] epoch is: 6, eval success rate is: 0.370, average reward is: -133.530, average value is: -5.849
+[2022-01-08 12:03:17.620147] epoch is: 7, eval success rate is: 0.470, average reward is: -117.690, average value is: -4.778
+[2022-01-08 12:19:37.379094] epoch is: 8, eval success rate is: 0.400, average reward is: -131.930, average value is: -4.560
+[2022-01-08 12:36:35.835828] epoch is: 9, eval success rate is: 0.420, average reward is: -130.850, average value is: -4.253
+Saved agent
+Saved value estimator
+running .25 noise, 2-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-08 12:45:38.786209] epoch is: 0, eval success rate is: 0.150, average reward is: -175.510, average value is: -6.726
+[2022-01-08 12:54:22.259743] epoch is: 1, eval success rate is: 0.180, average reward is: -172.490, average value is: -11.116
+[2022-01-08 13:04:38.033249] epoch is: 2, eval success rate is: 0.270, average reward is: -158.420, average value is: -12.766
+[2022-01-08 13:15:31.445076] epoch is: 3, eval success rate is: 0.440, average reward is: -134.810, average value is: -13.727
+[2022-01-08 13:29:10.410158] epoch is: 4, eval success rate is: 0.560, average reward is: -114.630, average value is: -8.211
+[2022-01-08 13:44:59.464163] epoch is: 5, eval success rate is: 0.480, average reward is: -124.230, average value is: -7.155
+[2022-01-08 14:01:02.207598] epoch is: 6, eval success rate is: 0.460, average reward is: -123.740, average value is: -6.243
+[2022-01-08 14:17:24.495568] epoch is: 7, eval success rate is: 0.500, average reward is: -114.150, average value is: -4.960
+[2022-01-08 14:34:01.682572] epoch is: 8, eval success rate is: 0.430, average reward is: -128.320, average value is: -5.160
+[2022-01-08 14:50:44.631839] epoch is: 9, eval success rate is: 0.410, average reward is: -130.320, average value is: -4.970
+Saved agent
+Saved value estimator
+running .5 noise, 1-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-08 15:00:10.886569] epoch is: 0, eval success rate is: 0.150, average reward is: -175.580, average value is: -6.693
+[2022-01-08 15:09:11.478199] epoch is: 1, eval success rate is: 0.170, average reward is: -171.770, average value is: -11.189
+[2022-01-08 15:19:30.329283] epoch is: 2, eval success rate is: 0.260, average reward is: -159.960, average value is: -13.127
+[2022-01-08 15:32:42.786176] epoch is: 3, eval success rate is: 0.450, average reward is: -130.930, average value is: -9.085
+[2022-01-08 15:46:27.250390] epoch is: 4, eval success rate is: 0.510, average reward is: -122.760, average value is: -10.084
+[2022-01-08 16:01:49.823401] epoch is: 5, eval success rate is: 0.480, average reward is: -122.000, average value is: -6.550
+[2022-01-08 16:17:48.317017] epoch is: 6, eval success rate is: 0.450, average reward is: -123.930, average value is: -6.563
+[2022-01-08 16:34:16.420835] epoch is: 7, eval success rate is: 0.460, average reward is: -119.810, average value is: -5.283
+[2022-01-08 16:50:55.090224] epoch is: 8, eval success rate is: 0.500, average reward is: -119.200, average value is: -5.235
+[2022-01-08 17:07:28.757699] epoch is: 9, eval success rate is: 0.390, average reward is: -136.690, average value is: -4.784
+Saved agent
+Saved value estimator
+running .5 noise, 2-goal
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Box bound precision lowered by casting to float32
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+/home/liam/anaconda3/lib/python3.7/site-packages/gym/logger.py:30: UserWarning: WARN: Environment '<class 'gym_extensions.continuous.gym_navigation_2d.goal_conditioned_env.LimitedRangeBasedPOMDPNavigation2DEnv'>' has deprecated methods '_step' and '_reset' rather than 'step' and 'reset'. Compatibility code invoked. Set _gym_disable_underscore_compat = True to disable this behavior.
+  warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'))
+[2022-01-08 17:16:15.358241] epoch is: 0, eval success rate is: 0.100, average reward is: -182.620, average value is: -6.982
+[2022-01-08 17:25:16.709555] epoch is: 1, eval success rate is: 0.210, average reward is: -170.490, average value is: -11.406
+[2022-01-08 17:36:30.651855] epoch is: 2, eval success rate is: 0.430, average reward is: -135.400, average value is: -11.399
+[2022-01-08 17:48:45.601023] epoch is: 3, eval success rate is: 0.390, average reward is: -137.750, average value is: -10.263
+[2022-01-08 18:03:13.184166] epoch is: 4, eval success rate is: 0.480, average reward is: -121.300, average value is: -8.403
+[2022-01-08 18:18:51.689682] epoch is: 5, eval success rate is: 0.470, average reward is: -122.420, average value is: -7.802
+[2022-01-08 18:34:54.127443] epoch is: 6, eval success rate is: 0.380, average reward is: -132.320, average value is: -6.557
+[2022-01-08 18:50:40.591981] epoch is: 7, eval success rate is: 0.440, average reward is: -122.520, average value is: -5.511
+[2022-01-08 19:07:15.537428] epoch is: 8, eval success rate is: 0.340, average reward is: -137.320, average value is: -5.586
+[2022-01-08 19:23:59.821439] epoch is: 9, eval success rate is: 0.420, average reward is: -131.770, average value is: -5.429

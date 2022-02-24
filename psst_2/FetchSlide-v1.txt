@@ -1,0 +1,11 @@
+
+\nrunning FetchSlide-v1, 0 noise, 1-goal
+\nrunning FetchSlide-v1, 0 noise, 2-goal
+\nrunning FetchSlide-v1, .03 noise, 1-goal
+\nrunning FetchSlide-v1, .03 noise, 2-goal
+\nrunning FetchSlide-v1, .1 noise, 1-goal
+\nrunning FetchSlide-v1, .1 noise, 2-goal
+\nrunning FetchSlide-v1, .25 noise, 1-goal
+\nrunning FetchSlide-v1, .25 noise, 2-goal
+\nrunning FetchSlide-v1, .5 noise, 1-goal
+\nrunning FetchSlide-v1, .5 noise, 2-goal
