@@ -21,7 +21,7 @@ idx_to_goal = [[np.random.randn(2)*0-20 for i in range(3)] for j in range(n_goal
 
 custom_envs = {}
 
-max_episode_steps=200
+max_episode_steps=50
 
 for i in range(n_goals):
     for j in range(3):

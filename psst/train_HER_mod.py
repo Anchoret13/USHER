@@ -24,13 +24,13 @@ from pomp.planners.plantogym import PlanningEnvGymWrapper, KinomaticGymWrapper
 from pomp.example_problems.doubleintegrator import doubleIntegratorTest
 from pomp.example_problems.dubins import dubinsCarTest
 from pomp.example_problems.pendulum import pendulumTest
-from pomp.example_problems.robotics.fetch.reach import FetchReachEnv
-from pomp.example_problems.robotics.fetch.push import FetchPushEnv
-from pomp.example_problems.robotics.fetch.slide import FetchSlideEnv
-from pomp.example_problems.robotics.fetch.pick_and_place import FetchPickAndPlaceEnv
+# from pomp.example_problems.robotics.fetch.reach import FetchReachEnv
+# from pomp.example_problems.robotics.fetch.push import FetchPushEnv
+# from pomp.example_problems.robotics.fetch.slide import FetchSlideEnv
+# from pomp.example_problems.robotics.fetch.pick_and_place import FetchPickAndPlaceEnv
 
 
-from continuous_gridworld import create_map_1
+# from continuous_gridworld import create_map_1, random_map
 
 from gym_extensions.continuous.gym_navigation_2d.env_generator import Environment#, EnvironmentCollection, Obstacle
 
@@ -38,7 +38,7 @@ from pomp.example_problems.gym_pendulum_baseenv import PendulumGoalEnv
 from gym.wrappers.time_limit import TimeLimit
 
 import pickle
-from action_randomness_wrapper import ActionRandomnessWrapper
+from action_randomness_wrapper import ActionRandomnessWrapper, RepeatedActionWrapper
 
 
 """
@@ -75,12 +75,57 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
     elif args.env_name == "MultiGoalEnvironmentVelGoal":
         env = MultiGoalEnvironment("MultiGoalEnvironment", time=True, vel_goal=True)
     elif args.env_name == "Car":
-        env = CarEnvironment("CarEnvironment", time=True, vel_goal=False)
+        # env = CarEnvironment("CarEnvironment", time=True, vel_goal=False)
+        env = TimeLimit(NewCarEnv(vel_goal=False), max_episode_steps=50)
         # env = TimeLimit(CarEnvironment("CarEnvironment", time=True, vel_goal=False), max_episode_steps=50)
+    elif "Gridworld" in args.env_name: 
+        # from continuous_gridworld import create_map_1, random_blocky_map, two_door_environment, random_map
+        from alt_gridworld_implementation import create_test_map, create_map_1, random_blocky_map, two_door_environment, random_map
+        # from gridworld_reimplementation import random_map
+
+        if args.env_name == "TwoDoorGridworld":
+            env=TimeLimit(two_door_environment(), max_episode_steps=50)
+        else:
+            if "RandomBlocky" in args.env_name:
+                mapmaker = random_blocky_map
+            elif "Random" in args.env_name:
+                mapmaker = random_map
+            elif "Test" in args.env_name: 
+                mapmaker = create_test_map
+            else: 
+                mapmaker = create_map_1
+
+            if "Asteroids" in args.env_name: 
+
+                env_type="asteroids"
+            elif "Car" in args.env_name:
+                env_type = "car"
+            else: 
+                env_type = "linear"
+            env = TimeLimit(mapmaker(env_type=env_type), max_episode_steps=10)
+        # if args.env_name == "Gridworld" :
+        #     env = TimeLimit(create_map_1(), max_episode_steps=50)
+        # elif args.env_name == "RandomGridworld" :
+        #     env = TimeLimit(random_map(), max_episode_steps=50)
+        # elif args.env_name == "RandomGridworld" :
+        #     env = TimeLimit(random_blocky_map(), max_episode_steps=50)
+        # elif args.env_name == "AsteroidsGridworld" :
+        #     env = TimeLimit(create_map_1(env_type="asteroids"), max_episode_steps=50)
+        # elif args.env_name == "AsteroidsRandomGridworld" :
+        #     env = TimeLimit(random_map(env_type="asteroids"), max_episode_steps=50)
+        # elif args.env_name == "CarGridworld" :
+        #     env = TimeLimit(create_map_1(env_type="car"), max_episode_steps=50)
+        # elif args.env_name == "CarRandomGridworld" :
+        #     env = TimeLimit(random_map(env_type="car"), max_episode_steps=50)
+        # else: 
+        #     print(f"No environment with the name {args.env_name}")
+        #     raise Exception
     elif "AsteroidsVelGoal" in args.env_name:
         env = TimeLimit(RotationEnv(vel_goal=True), max_episode_steps=50)
     elif "Asteroids" in args.env_name:
         env = TimeLimit(RotationEnv(vel_goal=False), max_episode_steps=50)
+    elif "SimpleMovement" in args.env_name:
+        env = TimeLimit(SimpleMovementEnvironment(vel_goal=False), max_episode_steps=50)
     elif args.env_name == "PendulumGoal":
         env = TimeLimit(PendulumGoalEnv(g=9.8), max_episode_steps=200)
     elif "FetchReach" in args.env_name:
@@ -91,15 +136,17 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
         env = TimeLimit(FetchSlideEnv(), max_episode_steps=50)
     elif "FetchPickAndPlace" in args.env_name:
         env = TimeLimit(FetchPickAndPlaceEnv(), max_episode_steps=50)
-    elif args.env_name == "Gridworld" :
-        env = TimeLimit(create_map_1(), max_episode_steps=20)
     elif "ContinuousAcrobot" in args.env_name:
         env = TimeLimit(ContinuousAcrobotEnv(), max_episode_steps=50)
+    elif "2DNav" in args.env_name or "2Dnav" in args.env_name: 
+        env = gym.make("Limited-Range-Based-Navigation-2d-Map4-Goal0-v0")
+        env._max_episode_steps=50
     else:
         env = gym.make(args.env_name)
 
-
+    print(f"Using environment {env}")
     env = ActionRandomnessWrapper(env, args.action_noise)
+    # env =  RepeatedActionWrapper(env, 5)
     # env = TimeLimit(FetchReachEnv(), max_episode_steps=50)
     # env = TimeLimit(FetchPushEnv(), max_episode_steps=50)
     # env = MultiGoalEnvironment("MultiGoalEnvironment", time=time, vel_goal=vel_goal)#, epsilon=.1/4) 
@@ -205,11 +252,13 @@ if __name__ == '__main__':
         # else:
         #     # from HER_mod.rl_modules.ddpg_agent import ddpg_agent
         #     from HER_mod.rl_modules.sac import ddpg_agent
-        if args.apply_ratio: 
-            # from HER_mod.rl_modules.true_ratio_two_goal_usher import ddpg_agent
-            from HER_mod.rl_modules.t_conditioned_two_goal_usher import ddpg_agent
-        else:
-            from HER_mod.rl_modules.two_goal_usher import ddpg_agent
+        # if args.apply_ratio: 
+        #     # from HER_mod.rl_modules.true_ratio_two_goal_usher import ddpg_agent
+        #     from HER_mod.rl_modules.t_conditioned_two_goal_usher import ddpg_agent
+        # else:
+        #     from HER_mod.rl_modules.two_goal_usher import ddpg_agent
+        from HER_mod.rl_modules.t_conditioned_two_goal_usher import ddpg_agent
+
 
 
         # from HER_mod.rl_modules.sac import ddpg_agent
@@ -241,9 +290,12 @@ if __name__ == '__main__':
 
 
     
-    n = 10
-    # success_rate = sum([agent._eval_agent() for _ in range(n)])/n
+    n = 50
     evs = [agent._eval_agent() for _ in range(n)]
+    # success_rate = sum([agent._eval_agent() for _ in range(n)])/n
+    # for _ in range(3):
+    #     agent.learn(1)
+    #     evs += [agent._eval_agent() for _ in range(n)]
     success_rate = sum([evs[i]['success_rate'] for i in range(n)])/n
     reward_rate = sum([evs[i]['reward_rate'] for i in range(n)])/n
     value_rate = sum([evs[i]['value_rate'] for i in range(n)])/n

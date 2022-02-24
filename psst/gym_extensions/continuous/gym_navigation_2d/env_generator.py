@@ -7,6 +7,8 @@ from math import sqrt, asin, cos, sin, atan2
 import networkx as nx
 from .env_utils import Obstacle, Environment
 from .geometry_utils import *
+# from env_utils import Obstacle, Environment
+# from geometry_utils import *
 import sys
 import pickle
 
@@ -101,9 +103,11 @@ class EnvironmentCollection(object):
         self.map_collection = {}
 
         eg = EnvironmentGenerator(x_range, y_range, width_range, height_range)
+        dens_func = lambda i: 0 if i == self.num_environments - 1 else density*2**(-i/2+1)
         for i in range(self.num_environments):
             print('Sampling environment', i)
-            centers, widths, heights = eg.sample_axis_aligned_rectangles(density)
+            # centers, widths, heights = eg.sample_axis_aligned_rectangles(density)
+            centers, widths, heights = eg.sample_axis_aligned_rectangles(dens_func(i))
             obstacles = eg.merge_rectangles_into_obstacles(centers, widths, heights, epsilon=0.2)
             self.map_collection[i] = Environment(self.x_range, self.y_range, list(obstacles.values()))
 

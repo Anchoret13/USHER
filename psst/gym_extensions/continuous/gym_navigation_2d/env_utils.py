@@ -160,8 +160,9 @@ class Environment(object):
         b = p + max_range * direction
 
         if self.segment_is_in_free_space(a[0], a[1], b[0], b[1], epsilon=1e-10):
-            return -1.0
-
+            # return -1.0
+            return max_range
+        # print("segment not in free space")
         last_free_dist = 0
         for e in range(n_evals):
             dist = e/float(n_evals) * max_range

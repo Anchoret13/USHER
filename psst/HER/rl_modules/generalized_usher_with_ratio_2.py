@@ -279,7 +279,9 @@ class ddpg_agent:
         q0, p0 = self.critic_network(inputs_norm_tensor, map_t(t), actions_tensor, return_p=True)
 
         if self.args.apply_ratio: 
-            true_c = .02#.0025 #make as small as can be allowed without compromising stability
+            true_c = self.args.ratio_offset
+            # true_c = .04#.0025 #make as small as can be allowed without compromising stability
+            on_value_true_c = 0#.1
             # true_c = .1#.0025 #make as small as can be allowed without compromising stability
             c = .1
             low_range = False
@@ -291,37 +293,24 @@ class ddpg_agent:
                 p_denom =  p_next_value.detach()
             numerator = c + q0.detach()/clip_return + 1
             denomenator = c + q_next_value.detach()/clip_return + 1
-            assert c == self.args.ratio_offset
+            # assert c == self.args.ratio_offset
 
             # ratio = (numerator)/(denomenator)
-            true_ratio = (true_c+p_num)/(true_c+p_denom)
+            addon = torch.ones_like(p_num)*on_value_true_c
+            addon[transitions['her_used']] *= 0
+            true_ratio = (true_c+addon+p_num)/(true_c+addon+p_denom)
             # ratio[transitions['her_used']] = true_ratio
-            # addon = torch.ones_like(true_ratio)
-            # addon[transitions['her_used']] *= 0
             ratio = true_ratio.detach() #+ addon
-            print_fraction = 10000
-            # try: 
-            #     assert type(ratio) == torch.Tensor
-            #     assert not (ratio == None).any()
-            # except:
-            #     pdb.set_trace()
-            # if np.random.rand() < 1/print_fraction: 
-            #     print(f"Mean: {torch.mean(ratio)}, \t STD: {torch.std(ratio)}, Max: {torch.max(ratio)},\t, Min: {torch.min(ratio)}") 
-            # ratio = true_ratio
-            # ratio = 1
-            # true_ratio = 1
-
-            # target_q_value = ratio*target_q_value
-            # target_q_value = true_ratio*target_q_value
-            # target_p_value = true_ratio*target_p_value
+            critic_loss = (ratio*((target_q_value - q0).pow(2))).mean() + (target_p_value - p0).pow(2).mean()*clip_return
         else: 
             ratio = torch.ones_like(p0).detach()
+            critic_loss = (ratio*((target_q_value - q0).pow(2))).mean() + 0*(target_p_value - p0).pow(2).mean()*clip_return
         # if self.double_q:
         #     q2 = self.critic_2(inputs_norm_tensor_pol, actions_tensor)
         #     critic_loss = (target_q_value - q1).pow(2).mean() + (target_q_value - q2).pow(2).mean()
         # else:  
         # critic_loss = (target_q_value - q0).pow(2).mean() + (target_p_value - p0).pow(2).mean()*clip_return
-        critic_loss = (ratio*((target_q_value - q0).pow(2))).mean() + (target_p_value - p0).pow(2).mean()*clip_return
+        # critic_loss = (target_q_value - q0).pow(2).mean() + (target_p_value - p0).pow(2).mean()*0
         # the actor loss
         self.global_count += 1
         if self.global_count % 2 == 0:
@@ -362,7 +351,7 @@ class ddpg_agent:
                 value = self.critic_network(inputs_norm_tensor, torch.tensor([[1]]), actions_tensor).mean().numpy().squeeze()
                 total_value += value
 
-            for _ in range(self.env_params['max_timesteps']):
+            for t in range(self.env_params['max_timesteps']):
                 with torch.no_grad():
                     pi = self.actor_network.normed_forward(obs, g, deterministic=True)
                     inputs_norm_tensor = self._preproc_inputs(obs, g, gpi=g)
@@ -375,7 +364,7 @@ class ddpg_agent:
                     actions = actions_tensor.numpy().squeeze(axis=0)
                     # value = self.critic_network(inputs_norm_tensor, actions_tensor).mean().numpy().squeeze()
                 observation_new, r, _, info = self.env.step(actions)
-                total_r += r
+                total_r += r*self.args.gamma**t
                 # total_value += value
                 obs = observation_new['observation']
                 g = observation_new['desired_goal']

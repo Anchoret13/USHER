@@ -307,8 +307,6 @@ class MultiGoalEnvironment:
 
 
 
-
-
 class RotationGoalEnvironment:
 	def __init__(self, name, num=4, time=True, vel_goal=False, epsilon=.1):
 		self.num=1

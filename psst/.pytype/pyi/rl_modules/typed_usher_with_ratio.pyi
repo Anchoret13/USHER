@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 MPI: Any
 actor: Any
+argparse: module
 critic: Any
 critic_constructor: Any
 datetime: Any
@@ -72,7 +73,7 @@ class ddpg_agent:
     actor_network: Any
     actor_optim: Any
     actor_target_network: Any
-    args: Any
+    args: argparse.Namespace
     buffer: Any
     critic_network: Any
     critic_optim: Any
@@ -85,7 +86,7 @@ class ddpg_agent:
     model_path: Any
     o_norm: Any
     t: int
-    def __init__(self, args, env, env_params) -> None: ...
+    def __init__(self, args: argparse.Namespace, env, env_params) -> None: ...
     def _eval_agent(self, final = ...) -> Dict[str, Any]: ...
     def _preproc_inputs(self, obs: ObsArray, g: GoalArray, gpi: Optional[GoalArray] = ...) -> NormedTensor: ...
     def _preproc_og(self, o: ObsArray, g: GoalArray) -> Tuple[ObsArray, GoalArray]: ...

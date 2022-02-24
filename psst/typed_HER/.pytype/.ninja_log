@@ -1,0 +1,17 @@
+# ninja log v5
+0	772	1644268809055982137	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/her_types.pyi	27a33a0079a8e986
+773	1390	1644268809691982052	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/her_modules/usher.pyi	45a1d657c19e1199
+1390	2059	1644268810363981968	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/alternate_sac_actor.pyi	af56b6a703dbf72c
+2059	3630	1644268811803981811	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/usher_models.pyi	17cd87c3af0b0181
+3630	4348	1644268812647981735	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/replay_buffer.pyi	c92059ff61bfe28e
+4348	5050	1644268813359981678	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/mpi_utils/normalizer.pyi	1de8cfa74dd08750
+5050	5637	1644268813943981636	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/mpi_utils/mpi_utils.pyi	a4ed1ec6c62854f8
+5637	6436	1644268814711981592	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/arguments.pyi	dabe437e9556278a
+6436	7893	1644268816103981534	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/typed_usher_with_ratio.pyi	35897969a0a57f35
+7893	8423	1644268816739981517	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/minimal_train.pyi	68aa39ddfb6875d1
+0	1455	1644268855815992148	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/typed_usher_with_ratio.pyi	35897969a0a57f35
+1455	1984	1644268856455992509	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/minimal_train.pyi	68aa39ddfb6875d1
+0	1436	1644268864283997383	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/typed_usher_with_ratio.pyi	35897969a0a57f35
+1436	1973	1644268864923997819	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/minimal_train.pyi	68aa39ddfb6875d1
+0	2216	1644268989128182987	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/typed_usher_with_ratio.pyi	f4fb6a9738a5312c
+0	2345	1644269014340242707	/home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/typed_usher_with_ratio.pyi	f4fb6a9738a5312c

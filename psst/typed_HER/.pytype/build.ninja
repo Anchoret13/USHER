@@ -1,0 +1,30 @@
+rule infer
+  command = /home/liam/anaconda3/bin/python -m pytype.single --imports_info $imports --module-name $module -V 3.7 -o $out --no-report-errors --nofail --quick $in
+  description = infer $module
+rule check
+  command = /home/liam/anaconda3/bin/python -m pytype.single --imports_info $imports --module-name $module -V 3.7 -o $out --analyze-annotated --nofail --quick $in
+  description = check $module
+build /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/her_types.pyi: infer /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/her_types.py
+  imports = /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/imports/her_types.imports
+  module = her_types
+build /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/her_modules/usher.pyi: infer /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/her_modules/usher.py
+  imports = /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/imports/her_modules.usher.imports
+  module = her_modules.usher
+build /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/alternate_sac_actor.pyi: infer /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/rl_modules/alternate_sac_actor.py
+  imports = /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/imports/rl_modules.alternate_sac_actor.imports
+  module = rl_modules.alternate_sac_actor
+build /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/usher_models.pyi: infer /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/rl_modules/usher_models.py
+  imports = /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/imports/rl_modules.usher_models.imports
+  module = rl_modules.usher_models
+build /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/replay_buffer.pyi: infer /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/rl_modules/replay_buffer.py
+  imports = /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/imports/rl_modules.replay_buffer.imports
+  module = rl_modules.replay_buffer
+build /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/mpi_utils/normalizer.pyi: infer /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/mpi_utils/normalizer.py
+  imports = /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/imports/mpi_utils.normalizer.imports
+  module = mpi_utils.normalizer
+build /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/mpi_utils/mpi_utils.pyi: infer /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/mpi_utils/mpi_utils.py
+  imports = /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/imports/mpi_utils.mpi_utils.imports
+  module = mpi_utils.mpi_utils
+build /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/typed_usher_with_ratio.pyi: check /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/rl_modules/typed_usher_with_ratio.py | /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/mpi_utils/mpi_utils.pyi /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/mpi_utils/normalizer.pyi /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/replay_buffer.pyi /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/usher_models.pyi /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/rl_modules/alternate_sac_actor.pyi /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/her_modules/usher.pyi /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/pyi/her_types.pyi
+  imports = /home/liam/Desktop/usher_repo/USHER/psst/typed_HER/.pytype/imports/rl_modules.typed_usher_with_ratio.imports
+  module = rl_modules.typed_usher_with_ratio

@@ -140,6 +140,8 @@ class LimitedRangeBasedPOMDPNavigation2DEnv(gym.GoalEnv):
         # else: 
             # reward = self.compute_reward(self.state, self.destination, None)
             # self.state = new_state
+        if collided: print("collided")
+
 
         self.collided = collided or self.collided
         if not self.collided:
@@ -297,3 +299,8 @@ class StateBasedMDPNavigation2DEnv(LimitedRangeBasedPOMDPNavigation2DEnv):
 
         return observation
         # return obs
+
+from .modifiable_dynamics_env import LimitedRangeBasedPOMDPNavigation2DEnv as CollisionCheckingWrapper
+# from .modifiable_dynamics_env import CollisionCheckingWrapper
+class LimitedRangeBasedPOMDPNavigation2DEnv(CollisionCheckingWrapper):
+    pass

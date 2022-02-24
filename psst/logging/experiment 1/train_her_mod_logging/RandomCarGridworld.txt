@@ -1,0 +1,7 @@
+
+
+running RandomCarGridworld, 0 noise, 2-goal ratio with .01 offset
+
+running RandomCarGridworld, 0 noise, 1-goal
+
+running RandomCarGridworld, .25 noise, 2-goal ratio with .01 offset

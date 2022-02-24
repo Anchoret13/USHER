@@ -1,44 +1,43 @@
 import numpy as np
-import gym
-import os, sys
-from mpi4py import MPI
-import pdb
-from HER.arguments import get_args
+import gym #type: ignore
+import os, sys #type: ignore
+from mpi4py import MPI #type: ignore
+import pdb #type: ignore
+from HER.arguments import get_args #type: ignore
 # from HER.rl_modules.ddpg_agent import ddpg_agent
 # from HER.rl_modules.model_normed_ddpg_agent import ddpg_agent
 # from HER.rl_modules.sac_agent import ddpg_agent
 # from HER.rl_modules.p2p_agent import ddpg_agent
-from HER.rl_modules.sac_models import StateValueEstimator
+from HER.rl_modules.sac_models import StateValueEstimator#type: ignore
 
-import random
-import torch
+import random#type: ignore
+import torch#type: ignore
 
-from pomp.planners.plantogym import PlanningEnvGymWrapper, KinomaticGymWrapper
+from pomp.planners.plantogym import PlanningEnvGymWrapper, KinomaticGymWrapper#type: ignore
 
-from pomp.example_problems.doubleintegrator import doubleIntegratorTest
-from pomp.example_problems.pendulum import pendulumTest
-from pomp.example_problems.gym_pendulum_baseenv import PendulumGoalEnv
+from pomp.example_problems.doubleintegrator import doubleIntegratorTest#type: ignore
+from pomp.example_problems.pendulum import pendulumTest#type: ignore
+from pomp.example_problems.gym_pendulum_baseenv import PendulumGoalEnv#type: ignore
 
-from pomp.example_problems.robotics.fetch.reach import FetchReachEnv
-from pomp.example_problems.robotics.fetch.push import FetchPushEnv
-from pomp.example_problems.robotics.fetch.slide import FetchSlideEnv
-from pomp.example_problems.robotics.fetch.pick_and_place import FetchPickAndPlaceEnv
+# from pomp.example_problems.robotics.fetch.reach import FetchReachEnv#type: ignore
+# from pomp.example_problems.robotics.fetch.push import FetchPushEnv#type: ignore
+# from pomp.example_problems.robotics.fetch.slide import FetchSlideEnv#type: ignore
+# from pomp.example_problems.robotics.fetch.pick_and_place import FetchPickAndPlaceEnv#type: ignore
 
-from continuous_gridworld import create_map_1
 
-from pomp.example_problems.robotics.hand.reach import HandReachEnv
+# from pomp.example_problems.robotics.hand.reach import HandReachEnv#type: ignore
 
 # from gym_extensions.continuous.gym_navigation_2d.env_generator import Environment, EnvironmentCollection, Obstacle
 from gym_extensions.continuous.gym_navigation_2d.env_generator import Environment#, EnvironmentCollection, Obstacle
 
-from HER_mod.rl_modules.velocity_env import MultiGoalEnvironment, CarEnvironment
-from HER_mod.rl_modules.car_env import *
-from HER_mod.rl_modules.continuous_acrobot import ContinuousAcrobotEnv
+from HER_mod.rl_modules.velocity_env import MultiGoalEnvironment, CarEnvironment#type: ignore
+from HER_mod.rl_modules.car_env import RotationEnv, NewCarEnv, SimpleMovementEnvironment#type: ignore
+from HER_mod.rl_modules.continuous_acrobot import ContinuousAcrobotEnv#type: ignore
 
-import pickle
+import pickle#type: ignore
 
-from gym.wrappers.time_limit import TimeLimit
-from action_randomness_wrapper import ActionRandomnessWrapper
+from gym.wrappers.time_limit import TimeLimit#type: ignore
+from action_randomness_wrapper import ActionRandomnessWrapper, RepeatedActionWrapper#type: ignore
 """
 train the agent, the MPI part code is copy from openai baselines(https://github.com/openai/baselines/blob/master/baselines/her)
 
@@ -65,12 +64,15 @@ def launch(args):
     elif args.env_name == "MultiGoalEnvironmentVelGoal":
         env = MultiGoalEnvironment("MultiGoalEnvironment", time=True, vel_goal=True)
     elif "Car" in args.env_name:
-        env = CarEnvironment("CarEnvironment", time=True, vel_goal=False)
+        # env = CarEnvironment("CarEnvironment", time=True, vel_goal=False)
+        env = TimeLimit(NewCarEnv(vel_goal=False), max_episode_steps=50)
         # env = TimeLimit(CarEnvironment("CarEnvironment", time=True, vel_goal=False), max_episode_steps=50)
     elif args.env_name == "Asteroids" :
         env = TimeLimit(RotationEnv(vel_goal=False), max_episode_steps=50)
     elif args.env_name == "AsteroidsVelGoal" :
         env = TimeLimit(RotationEnv(vel_goal=True), max_episode_steps=50)
+    elif "SimpleMovement" in args.env_name:
+        env = TimeLimit(SimpleMovementEnvironment(vel_goal=False), max_episode_steps=50)
     elif args.env_name == "PendulumGoal":
         env = TimeLimit(PendulumGoalEnv(g=9.8), max_episode_steps=200)
     elif args.env_name == "FetchReach":
@@ -83,14 +85,40 @@ def launch(args):
         env = TimeLimit(FetchPickAndPlaceEnv(), max_episode_steps=50)
     elif args.env_name == "HandReach":
         env = TimeLimit(HandReachEnv(), max_episode_steps=10)
-    elif args.env_name == "Gridworld" :
-        env = TimeLimit(create_map_1(), max_episode_steps=50)
+    elif "Gridworld" in args.env_name: 
+        from continuous_gridworld import create_map_1, random_map, random_blocky_map, two_door_environment
+        from alt_gridworld_implementation import create_test_map#, create_map_1, random_blocky_map, two_door_environment#, random_map
+        # from gridworld_reimplementation import random_map
+
+        if args.env_name == "TwoDoorGridworld":
+            env=TimeLimit(two_door_environment(), max_episode_steps=50)
+        else:
+            if "RandomBlocky" in args.env_name:
+                mapmaker = random_blocky_map
+            elif "Random" in args.env_name:
+                mapmaker = random_map
+            elif "Test" in args.env_name: 
+                mapmaker = create_test_map
+            else: 
+                mapmaker = create_map_1
+
+            if "Asteroids" in args.env_name: 
+
+                env_type="asteroids"
+            elif "Car" in args.env_name:
+                env_type = "car"
+            else: 
+                env_type = "linear"
+            env = TimeLimit(mapmaker(env_type=env_type), max_episode_steps=50)
     elif "ContinuousAcrobot" in args.env_name:
         env = TimeLimit(ContinuousAcrobotEnv(), max_episode_steps=50)
+    elif "2DNav" in args.env_name or "2Dnav" in args.env_name: 
+        env = gym.make("Limited-Range-Based-Navigation-2d-Map8-Goal0-v0")
     else:
         env = gym.make(args.env_name)
 
     env = ActionRandomnessWrapper(env, args.action_noise)
+    # env =  RepeatedActionWrapper(env, 5)
     # env = TimeLimit(FetchReachEnv(), max_episode_steps=50)
     # env = TimeLimit(FetchPushEnv(), max_episode_steps=50)
     # # problem = doubleIntegratorTest()
@@ -115,13 +143,13 @@ def launch(args):
 
     #inject randomness into environment
     # pdb.set_trace()
-    step_method = env.step
-    env.step = lambda action: step_method(
-            action + np.random.normal(
-                loc=[0]*env_params['action'], 
-                scale=[args.action_noise]*env_params['action']
-                )
-            )
+    # step_method = env.step
+    # env.step = lambda action: step_method(
+    #         action + np.random.normal(
+    #             loc=[0]*env_params['action'], 
+    #             scale=[args.action_noise]*env_params['action']
+    #             )
+    #         )
 
     ddpg_trainer = ddpg_agent(args, env, env_params)
     ddpg_trainer.learn()
@@ -156,6 +184,7 @@ if __name__ == '__main__':
         # else:
         #     from HER.rl_modules.generalized_usher import ddpg_agent
         from HER.rl_modules.generalized_usher_with_ratio_2 import ddpg_agent
+        # from HER.rl_modules.mod_agent import ddpg_agent
         # from HER.rl_modules.heuristic_difference_sac_agent import ddpg_agent
         # from HER.rl_modules.value_prior_agent import ddpg_agent
         # from HER.rl_modules.ddpg_agent import ddpg_agent

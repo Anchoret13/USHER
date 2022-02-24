@@ -13,7 +13,8 @@ from HER.mpi_utils.normalizer import normalizer
 from HER_mod.her_modules.usher import her_sampler
 
 from HER_mod.rl_modules.replay_buffer import replay_buffer
-from HER_mod.rl_modules.models import actor
+# from HER_mod.rl_modules.models import actor
+from HER_mod.rl_modules.models import sac_actor as actor
 from HER_mod.rl_modules.models import T_conditioned_ratio_critic as critic
 from HER_mod.rl_modules.value_map import *
 from HER_mod.rl_modules.velocity_env import *
@@ -39,14 +40,14 @@ class ValueEstimator:
     self.double_q = False
 
     self.critic_1 = critic(env_params)
-    self.critic_2 = critic(env_params)
     sync_networks(self.critic_1)
-    sync_networks(self.critic_2)
     self.critic_target_1 = critic(env_params)
-    self.critic_target_2 = critic(env_params)
     self.critic_target_1.load_state_dict(self.critic_1.state_dict())    
-    self.critic_target_2.load_state_dict(self.critic_2.state_dict())    
     if self.double_q: 
+        self.critic_2 = critic(env_params)
+        sync_networks(self.critic_2)
+        self.critic_target_2 = critic(env_params)
+        self.critic_target_2.load_state_dict(self.critic_2.state_dict())    
         self.critics_optimiser = torch.optim.Adam(list(self.critic_1.parameters()) + list(self.critic_2.parameters()), lr=self.args.lr_critic, weight_decay=.004)
     else: 
         self.critics_optimiser = torch.optim.Adam(list(self.critic_1.parameters()))# + list(self.critic_2.parameters()), lr=self.args.lr_critic, weight_decay=.004)
@@ -87,7 +88,8 @@ class ValueEstimator:
     # low_range = True
     delta_p = False
     if delta_p: assert low_range == False
-    
+    split_p_evals = True
+    split_p_evals = False
     with torch.no_grad():        
         actions_tensor = torch.tensor(transitions['actions'], dtype=torch.float32)
         r_tensor = torch.tensor(transitions['r'], dtype=torch.float32) 
@@ -97,12 +99,12 @@ class ValueEstimator:
         map_t = lambda t: -1 + 2*t/self.env_params['max_timesteps']
         # do the normalization
         # concatenate the stuffs
-        actions_next = actor(inputs_next_norm_tensor)
-        # actions_next = actor(inputs_next_norm_tensor, deterministic=True)
+        # actions_next = actor(inputs_next_norm_tensor)
+        actions_next = actor(inputs_next_norm_tensor, deterministic=True)
         shape = actions_next.shape
         TARGET_ACTION_NOISE = .1
         TARGET_ACTION_NOISE_CLIP = .25
-        noise = torch.clamp(TARGET_ACTION_NOISE * torch.normal(torch.zeros(shape), torch.ones(shape)), min=-TARGET_ACTION_NOISE_CLIP, max=TARGET_ACTION_NOISE_CLIP)
+        # noise = torch.clamp(TARGET_ACTION_NOISE * torch.normal(torch.zeros(shape), torch.ones(shape)), min=-TARGET_ACTION_NOISE_CLIP, max=TARGET_ACTION_NOISE_CLIP)
         # actions_next = torch.clamp(actions_next + noise, min=-1, max=1)
         actions_next = torch.clamp(actions_next, min=-1, max=1)
         # clip the q value
@@ -125,12 +127,16 @@ class ValueEstimator:
             target_p_value = target_p_value.detach()
             target_p_value = torch.clamp(target_p_value, -clip_return, 0)
         else: 
-            prob_t_is_zero = sum([1/(t+1) for t in range(self.env_params['max_timesteps'])])/self.env_params['max_timesteps']
+            # prob_t_is_zero = sum([1/(t+1) for t in range(self.env_params['max_timesteps'])])/self.env_params['max_timesteps']
             # target_p_value = exact_goal_tensor*prob_t_is_zero + p_next_value*(1-prob_t_is_zero)
             # target_p_value = (r_tensor + 1)*prob_t_is_zero + p_next_value*(1-prob_t_is_zero)
             # target_p_value = exact_goal_tensor/t + p_next_value*(t-1)/t
             # target_p_value = exact_goal_tensor + (1-exact_goal_tensor)*p_next_value#*(t-1)/t
-            target_p_value = exact_goal_tensor/t + p_next_value*(t-1)/t
+            if split_p_evals: 
+                # target_p_value = 1/t + p_next_value*(t-1)/t
+                target_p_value = exact_goal_tensor/t + p_next_value*(t-1)/t
+            else: 
+                target_p_value = exact_goal_tensor/t + p_next_value*(t-1)/t
             # target_p_value = her_used/t
 
             # target_p_value = r_tensor + self.args.gamma * p_next_value * (-r_tensor) + 1
@@ -145,31 +151,38 @@ class ValueEstimator:
     q0, p0 = self.critic_1(inputs_norm_tensor_pol, map_t(t), actions_tensor, return_p=True)
 
     if self.args.apply_ratio: 
-        true_c = .01#.0025 #make as small as can be allowed without compromising stability
-        c = .1
+        true_c = self.args.ratio_offset*1.2
+        # true_c = .01#.0025 #make as small as can be allowed without compromising stability
+        # c = .1
         if low_range: 
             p_num = p0.detach()/clip_return + 1
             p_denom =  p_next_value.detach()/clip_return + 1
         else:
             p_num = p0.detach()
             p_denom =  p_next_value.detach()
-        numerator = c + q0.detach()/clip_return + 1
-        denomenator = c + q_next_value.detach()/clip_return + 1
-        assert c == self.args.ratio_offset
+        # numerator = c + q0.detach()/clip_return + 1
+        # denomenator = c + q_next_value.detach()/clip_return + 1
+        # assert c == self.args.ratio_offset
 
-        ratio = (numerator)/(denomenator)
-        true_ratio = (true_c+p_num)/(true_c+p_denom)
-        # ratio[transitions['her_not_used']] = 1
+        # ratio = (numerator)/(denomenator)
+        true_ratio = (true_c+(1-true_c)*p_num)/(true_c+(1-true_c)*p_denom)
 
-        # target_q_value = ratio*target_q_value
-        # target_q_value = true_ratio*target_q_value
-        # target_p_value = true_ratio*target_p_value
-    # if self.double_q:
-    #     q2 = self.critic_2(inputs_norm_tensor_pol, actions_tensor)
-    #     critic_loss = (target_q_value - q1).pow(2).mean() + (target_q_value - q2).pow(2).mean()
-    # else:  
-    # critic_loss = (target_q_value - q0).pow(2).mean() + (target_p_value - p0).pow(2).mean()*clip_return
-    critic_loss = (true_ratio*((target_q_value - q0).pow(2))).mean() + (target_p_value - p0).pow(2).mean()*clip_return
+        critic_loss = (true_ratio*((target_q_value - q0).pow(2))).mean() + (target_p_value - p0).pow(2).mean()*clip_return
+        # critic_loss = critic_loss + 
+
+        if split_p_evals: 
+            alt_input = inputs_norm_tensor_pol.clone()
+            goal = self.env_params['goal']
+            # alt_goals = torch.normal(mean=torch.zeros_like(alt_input[:, -2*goal:-goal]), std=1)
+            alt_goals = torch.tensor(transitions['policy_g'])
+            # alt_goals += torch.normal(mean=torch.zeros_like(alt_input[:, -2*goal:-goal]), std=.02)
+            alt_input[:, -2*goal:-goal] = alt_goals
+            alt_q_next_value, alt_p_next_value = self.critic_target_1(inputs_next_norm_tensor_pol, map_t(t-1), actions_next, return_p=True)
+            alt_q0, alt_p0 = self.critic_1(alt_input, map_t(t), actions_tensor, return_p=True)
+            critic_loss += (alt_p0 - self.args.gamma*alt_p_next_value).pow(2).mean()*.1#/10#*clip_return
+    else: 
+        true_ratio = 1
+        critic_loss = (true_ratio*((target_q_value - q0).pow(2))).mean() + (target_p_value - p0).pow(2).mean()*clip_return
                                                         #p has smaller range, so increase scaling to compensate
     return critic_loss
 
@@ -256,13 +269,14 @@ class ddpg_agent:
         self.polyak_decay = (1-.5/(5*self.args.n_cycles))
         self.search_lr = .1
 
-    def learn(self, hooks=[]):
+    def learn(self, hooks=[], epochs=None):
         """
         train the network
 
         """
         # start to collect samples
-        for epoch in range(self.args.n_epochs):
+        epochs = self.args.n_epochs if epochs == None else epochs
+        for epoch in range(epochs):
             for _ in range(self.args.n_cycles):
                 mb_obs, mb_ag, mb_g, mb_actions = [], [], [], []
                 mb_col = []
@@ -336,7 +350,9 @@ class ddpg_agent:
                 self._soft_update_target_network(self.actor_target_network, self.actor_network)
                 # self._soft_update_target_network(self.critic_target_network, self.critic_network)
             # start to do the evaluation
+            self.actor_network.eval()
             ev = self._eval_agent()
+            self.actor_network.train()
             success_rate, reward, value = ev['success_rate'], ev['reward_rate'], ev['value_rate']
             if MPI.COMM_WORLD.Get_rank() == 0:
                 # print('[{}] epoch is: {}, eval success rate is: {:.3f}, average reward is: {:.3f}'.format(datetime.now(), epoch, success_rate, reward))
@@ -450,6 +466,8 @@ class ddpg_agent:
         inputs_norm_tensor_pol = torch.tensor(inputs_norm_pol, dtype=torch.float32)
         inputs_next_norm_tensor_pol = torch.tensor(inputs_next_norm_pol, dtype=torch.float32)
 
+        duplicated_g_input = torch.tensor(np.concatenate([obs_norm, g_norm, g_norm], axis=1), dtype=torch.float32)
+
         actions_tensor = torch.tensor(transitions['actions'], dtype=torch.float32)
         r_tensor = torch.tensor(transitions['r'], dtype=torch.float32) 
         t = torch.tensor(transitions['t_remaining'], dtype=torch.float32) 
@@ -462,13 +480,19 @@ class ddpg_agent:
 
         self.global_count += 1
         # scale = 1/(1-self.args.gamma)
+        use_random_actor = True
         if self.global_count % 2 == 0:
-            actions_real = self.actor_network(inputs_norm_tensor)
+            # actions_real = self.actor_network(inputs_norm_tensor)
+            actions_real, log_prob = self.actor_network(inputs_norm_tensor, with_logprob=True)
             if train_on_target: 
-                actor_loss = -self.critic.min_critic_target(inputs_norm_tensor_pol, map_t(t), actions_real).mean()
+                actor_loss = -self.critic.min_critic_target(duplicated_g_input, map_t(t), actions_real).mean()
             else: 
-                actor_loss = -self.critic.min_critic(inputs_norm_tensor_pol, map_t(t), actions_real).mean()
+                actor_loss = -self.critic.min_critic(duplicated_g_input, map_t(t), actions_real).mean()
             actor_loss += self.args.action_l2 * (actions_real / self.env_params['action_max']).pow(2).mean()
+            if use_random_actor:
+                actor_loss += self.args.entropy_regularization*log_prob.mean()
+            else: 
+                actor_loss -= self.args.entropy_regularization*log_prob.mean()
             # start to update the network
             self.actor_optim.zero_grad()
             actor_loss.backward()

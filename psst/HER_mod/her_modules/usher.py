@@ -9,6 +9,7 @@ class her_sampler:
             self.future_p = 1 - (1. / (1 + replay_k))
         else:
             self.future_p = 0
+        print(f"Future p: {self.future_p}")
         self.reward_func = reward_func
 
         self.gamma = gamma
