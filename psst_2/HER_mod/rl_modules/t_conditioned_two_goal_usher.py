@@ -166,7 +166,7 @@ class ValueEstimator:
 
         # ratio = (numerator)/(denomenator)
         true_ratio = (true_c+(1-true_c)*p_num)/(true_c+(1-true_c)*p_denom)
-        clip_scale = 1.4
+        clip_scale = 1+self.args.ratio_clip#1.4
         true_ratio = torch.clip(true_ratio, 1/clip_scale, clip_scale)
 
         critic_loss = (true_ratio*((target_q_value - q0).pow(2))).mean() + (target_p_value - p0).pow(2).mean()*clip_return

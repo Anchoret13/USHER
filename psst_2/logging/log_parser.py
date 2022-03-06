@@ -1,8 +1,15 @@
 import pdb
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import sys
+
+font = {'family' : 'normal',
+        # 'weight' : 'bold',
+        'size'   : 14}
+
+matplotlib.rc('font', **font)
 
 ci = lambda x, z=2: (np.mean(x) - z*np.std(x)/len(x)**.5, np.mean(x) + z*np.std(x)/len(x)**.5 )
 err_bar = lambda x, z=2: z*np.std(x)/len(x)**.5
@@ -12,6 +19,18 @@ loc = "logging"
 
 def format_name(inpt): 	
 	return ' '.join([s.capitalize() for s in inpt.split("_")])
+
+def format_title(inpt): 	
+	return (inpt.replace("RandomGridworld", " Random Obstacles")).replace("Gridworld", " Continuous Long/Short Path Environment")
+
+def format_method(inpt):
+	if "1-goal" in inpt: 
+		return "HER"
+	elif "2-goal ratio" in inpt:
+		return "USHER (proposed)"
+	elif "2-goal" in inpt:
+		return "2-goal HER"
+	assert False
 
 def parse_log(env_name):
 	filename = f"{loc}/{env_name}.txt"
@@ -52,6 +71,13 @@ def parse_log(env_name):
 	return experiment_dict
 
 def plot_log(experiment_dict, name="Environment"):
+	method = [i for i in experiment_dict.keys()][0]
+	if len(experiment_dict[method][keylist[0]]) > 1:
+		line_plot(experiment_dict, name=name)
+	else: 
+		bar_plot(experiment_dict, name=name)
+
+def line_plot(experiment_dict, name="Environment"):
 	color_list = ["red", "green", "blue", "brown", "pink"]
 	for key in keylist:
 		i=0
@@ -61,19 +87,47 @@ def plot_log(experiment_dict, name="Environment"):
 			upper_ci_list = [elem[2][0] for elem in experiment_dict[method][key]]
 			lower_ci_list = [elem[2][1] for elem in experiment_dict[method][key]]
 
-			plt.plot(noise_list, mean_list, color=color_list[i],label=method)
+			plt.plot(noise_list, mean_list, color=color_list[i],label=format_method(method))
 			plt.fill_between(noise_list, lower_ci_list, upper_ci_list, color=color_list[i], alpha=.1)
 
 			i += 1
 
 		plt.xlabel("Noise (fraction of maximum action)")
 		plt.ylabel(format_name(key))
-		plt.title(f"{name} Performance")
+		env_title = format_title(name)
+		plt.title(f"{env_title} Performance")
 		plt.legend()
 		plt.savefig(f"{loc}/images/{name}__{key}.png")
 		plt.show()
 
 	# pdb.set_trace()
+
+def bar_plot(experiment_dict, name="Environment"):
+	color_list = ["red", "green", "blue", "brown", "pink"]
+	methods = [m for m in experiment_dict.keys()]
+	ticks = list(range(len(methods)))
+	for key in keylist:
+		i=0
+		# for method in experiment_dict.keys():
+		# 	mean_list = [elem[1] for elem in experiment_dict[method][key]]
+		# 	upper_ci_list = [elem[2][0] for elem in experiment_dict[method][key]]
+		# 	lower_ci_list = [elem[2][1] for elem in experiment_dict[method][key]]
+
+		mean_list = [experiment_dict[method][key][0][1] for method in methods]
+		var_list = [experiment_dict[method][key][0][2][0] - experiment_dict[method][key][0][2][1] for method in methods]
+
+		plt.bar(ticks, mean_list, yerr=var_list)		
+		plt.xticks(ticks, [format_method(method) for method in experiment_dict.keys()])
+
+
+		# plt.xlabel("Noise (fraction of maximum action)")
+		plt.ylabel(format_name(key))
+		# env_title = format_title(name)
+		# plt.title(f"{env_title} Performance")
+		plt.legend()
+		plt.savefig(f"{loc}/images/{name}__{key}.png")
+		plt.show()
+
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ import numpy as np
 from typing import Tuple, Sequence, Callable, List
 from functools import reduce
 
-from gridworld import create_map_1
+from alt_gridworld import create_map_1
 from display import *
 from constants import *
 import pdb
@@ -25,17 +25,19 @@ def softmax_sample(arr, temp: float):
 
 
 env = create_map_1()
-episodes = 10**4
+episodes = 10**5
 base_lr = .5
-gamma = .8
+gamma = .9
 
 
 
 class Q: 
 	def __init__(self, size):
-		self.q_table = np.ones((env.size, env.size, 5))
+		# self.q_table = np.ones((env.size, env.size, 5)) 
+
+		self.q_table = np.ones(env.obs_scope + (5,))
 		# self.q_table = np.zeros((env.size, env.size, 5))
-		self.v_table = np.zeros((env.size, env.size))
+		# self.v_table = np.zeros((env.size, env.size))
 
 	def sample_action(self, state: np.ndarray, temp=5) -> int:
 		q = self.q_table[tuple(state)]
@@ -54,10 +56,10 @@ class Q:
 		b = lr*bellman_update
 		self.q_table[tuple(state)][action] = a + b
 
-	def _update_v(self, state: np.ndarray, cumulative_r: float, lr: float=.05) -> None:
-		a = (1-lr)*self.v_table[tuple(state)]
-		b = lr*cumulative_r
-		self.v_table[tuple(state)] = a + b
+	# def _update_v(self, state: np.ndarray, cumulative_r: float, lr: float=.05) -> None:
+	# 	a = (1-lr)*self.v_table[tuple(state)]
+	# 	b = lr*cumulative_r
+	# 	self.v_table[tuple(state)] = a + b
 
 	def update(self, episode: list, lr: float=.05) -> None:
 		# cumulative_r = 0#self.v_table[tuple(episode[-1][2])]
@@ -67,12 +69,12 @@ class Q:
 			self._update_q(state, action, next_state, reward, lr)
 			# self._update_v(state, cumulative_r, lr)
 
-	def update_v(self, episode: list, lr: float=.05) -> None:
-		cumulative_r = self.v_table[tuple(episode[-1][2])]
-		for frame in reversed(episode): 
-			state, action, next_state, reward = frame
-			cumulative_r = (1-gamma)*reward + gamma*cumulative_r 
-			self._update_v(state, cumulative_r, lr)
+	# def update_v(self, episode: list, lr: float=.05) -> None:
+	# 	cumulative_r = self.v_table[tuple(episode[-1][2])]
+	# 	for frame in reversed(episode): 
+	# 		state, action, next_state, reward = frame
+	# 		cumulative_r = (1-gamma)*reward + gamma*cumulative_r 
+	# 		self._update_v(state, cumulative_r, lr)
 
 
 index_to_action = {
@@ -116,23 +118,27 @@ def learn_q_function():
 	q = Q(env.size)
 	ave_r = 0
 
-	display_init(env, q)
+	# display_init(env, q)
 
 	for episode in range(episodes):
-		draw_grid(env, q)
+		# draw_grid(env, q)
 		state = env.reset()['observation']
-		lr = base_lr*2**(-2*episode/episodes)
+		state = env.get_state()
+		# lr = base_lr*2**(-2*episode/episodes)
+
+		power = .8
+		lr = (2**(-100*episode/episodes) + base_lr/(episodes**power/100+1))
 		# lr = .1*base_lr*episodes/(.1*episodes + episode)
 		# lr = .05
 		if episode%100 == 0: 
 			print("---------------------------")
 			get_ave_r = lambda ep: (1-gamma)*sum([gamma**i*ep[i][-1] for i in range(len(ep))])
 			eps = [observe_episode(env, q, q.argmax_action) for _ in range(50)]
-			[q.update_v(ep) for ep in eps]
+			# [q.update_v(ep) for ep in eps]
 			ave_r = mean([get_ave_r(ep) for ep in eps])
 			print(f"Average reward: {ave_r}")
 			print(f"Base q value: {q.q_table[tuple(state)].max()}")
-			print(f"Base v value: {q.v_table[tuple(state)]}")
+			# print(f"Base v value: {q.v_table[tuple(state)]}")
 			
 
 		ep = observe_episode(env, q, lambda s: q.sample_action(s))

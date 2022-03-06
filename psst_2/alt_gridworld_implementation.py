@@ -481,7 +481,9 @@ class AltGridworldEnv(GoalEnv):
 
 		self.goal_scope = (size, size)
 
-		self.reward_range = (0,1)
+		self.min_reward = -1
+		self.max_reward = 0
+		self.reward_range = (self.min_reward, self.max_reward)
 		self.steps = STEPS
 		self.high_speed_pretraining = True
 		# self.env = SimpleDynamicsEnv(size, start)
@@ -545,12 +547,6 @@ class AltGridworldEnv(GoalEnv):
 			broken = broken or next_broken
 			if broken: break
 
-		# next_state_type = self.grid[tuple(proposed_next_state.astype(int))]
-		# next_state_type = self.grid[tuple(proposed_ag.astype(int))]
-		# if not self.grid[tuple(proposed_next_state.astype(int))] == self.grid[tuple(proposed_ag.astype(int))]: 
-		# 	pdb.set_trace()
-		# next_state, broken = transitions[next_state_type](state, proposed_next_state)
-
 		if broken: 
 			self.broken = True
 		if self.broken:
@@ -559,30 +555,45 @@ class AltGridworldEnv(GoalEnv):
 		# assert (np.abs(state - next_state) < 1.01).all()
 
 		self.state = next_state.copy()
-		reward = self.same_square(self.env.state_to_goal(next_state), self.goal)
-		assert type(reward) == int or type(reward) == np.int64
+		reward = self.compute_reward(self.env.state_to_goal(next_state), self.goal)
+		try: 
+			assert type(reward) == int or type(reward) == np.int64
+			assert (reward <= self.max_reward).all() and (reward >= self.min_reward).all()
+		except: 
+			pdb.set_trace()
 		observation = self.get_obs()
 		# if self.high_speed_pretraining: self.broken = False
-		return observation, reward, False, {"is_success": reward == 0}
+		return observation, reward, False, {"is_success": reward == self.max_reward}
+
+	# def same_square(self, ag, dg, info=None):
+	# 	return (ag.astype(int) == dg.astype(int)).all(axis=-1) - 1
+
+
+	# def compute_reward(self, ag, dg, info=None):
+	# 	if self.randomize_start: 
+	# 		# true_threshold = 2**(-.5)#1#2
+	# 		# threshold = 2/self.size*true_threshold
+	# 		threshold = 2**(-.5)
+	# 		reward = (((ag - dg)**2).sum(axis=-1) < threshold) - 1
+	# 	else: 
+	# 		reward = self.same_square(ag,dg)
+	# 	return reward
+
 
 	def same_square(self, ag, dg, info=None):
-		return (ag.astype(int) == dg.astype(int)).all(axis=-1) - 1
+		in_same_square = (ag.astype(int) == dg.astype(int)).all(axis=-1) + 0
+		return in_same_square
 
-	# def compute_reward(self, ag, dg, info=None):
-	# 	return self.same_square(state_denormalize(ag,self.size),state_denormalize(dg,self.size))
-	# def compute_reward(self, ag, dg, info=None):
-	# 	return self.same_square(ag,dg)
-
+	def nearby(self, ag, dg):
+		threshold = 2**(-.5)
+		return (((ag - dg)**2).sum(axis=-1) < threshold) + 0
 
 	def compute_reward(self, ag, dg, info=None):
 		if self.randomize_start: 
-			# true_threshold = 2**(-.5)#1#2
-			# threshold = 2/self.size*true_threshold
-			threshold = 2**(-.5)
-			reward = (((ag - dg)**2).sum(axis=-1) < threshold) - 1
+			is_nearby = nearby(ag, dg)
 		else: 
-			reward = self.same_square(ag,dg)
-		return reward
+			is_nearby = self.same_square(ag,dg)
+		return is_nearby*self.max_reward + (1-is_nearby)*self.min_reward
 
 	def rand_state(self):
 		return np.array([np.random.randint(0, size), np.random.randint(0, size)])

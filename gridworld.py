@@ -45,10 +45,14 @@ class GridworldEnv(GoalEnv):
 
 	"""
 	def __init__(self, size, start, new_goal):
+		self.dim = 2
 		self.size = size
 		self.start = start
 		self.new_goal = new_goal
 		self.grid = np.zeros((size, size))
+
+		self.obs_scope = (size, size)
+		self.goal_scope = (size, size)
 
 		self.reward_range = (0,1)
 

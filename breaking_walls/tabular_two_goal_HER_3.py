@@ -2,7 +2,7 @@ import numpy as np		#type: ignore
 from typing import Tuple, Sequence, Callable, List, Union
 from functools import reduce
 
-from gridworld import create_map_1
+from alt_gridworld import create_map_1
 # from test_gridworld import create_map_1
 from display import *
 from constants import *
@@ -46,10 +46,11 @@ def softmax_sample(arr, temp: float):
 class Q: 
 	def __init__(self, size: int, compute_reward, default_goal: np.ndarray, k: int = 4):
 		# self.q_table = np.ones((env.size, env.size, 5))
-		self.q_table = np.zeros((env.size, env.size, env.size, env.size, env.size, env.size,  5)) + 1
-		self.pure_q_table = np.zeros((env.size, env.size, env.size, env.size, env.size, env.size, 5)) + 1
-		self.usher_q_table = np.zeros((env.size, env.size, env.size, env.size, env.size, env.size, 5)) + 1
-		self.g_pi_table = np.zeros((env.size, env.size, env.size, env.size, 5)) + 1
+		shape = env.obs_scope + env.new_goal_scope*2 + (5,)
+		self.q_table = np.zeros(shape) + 1
+		self.pure_q_table = np.zeros(shape) + 1
+		self.usher_q_table = np.zeros(shape) + 1
+		# self.g_pi_table = np.zeros((env.size, env.size, env.size, env.size, 5)) + 1
 		# self.v_table = np.zeros((env.size, env.size))
 		self.compute_reward = compute_reward
 		self.default_goal = default_goal
@@ -162,10 +163,6 @@ class Q:
 		if (goal == pol_goal).all():
 			p = self.p if type(p) == type(None) else p
 			next_action = self.usher_q_table[tuple(next_state) + tuple(goal) + tuple(goal)].argmax()
-			# ratio = (
-			# 	((self.g_pi_table[tuple(state) + tuple(pol_goal)][action])*(p*gamma + (1-p*gamma)*self.usher_q_table[tuple(state) + tuple(goal) + tuple(pol_goal)][action]))/
-			# 	((self.g_pi_table[tuple(next_state) + tuple(pol_goal)][next_action])*(p*gamma + (1-p*gamma)*self.usher_q_table[tuple(next_state) + tuple(goal) + tuple(pol_goal)].max()))
-			# 	)
 			ratio = (
 				(p + (1-p)*self.usher_q_table[tuple(state) + tuple(goal) + tuple(pol_goal)][action])/
 				(p + (1-p)*self.usher_q_table[tuple(next_state) + tuple(goal) + tuple(pol_goal)].max())

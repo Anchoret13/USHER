@@ -6,16 +6,18 @@ env_name="Asteroids"
 agent="train_HER_mod.py"
 # offset=".01"
 k=8
-offset=".11"
-args='--entropy-regularization=0.0001 --n-test-rollouts=50 --n-cycles=500 --n-batches=4'
+offset=".01"
+clip=0.3
+args='--entropy-regularization=0.000 --n-test-rollouts=50 --n-cycles=500 --n-batches=4'
 # for env_name in "Gridworld" "RandomGridworld" "AsteroidsGridworld" "RandomAsteroidsGridworld" "CarGridworld" "RandomCarGridworld"
  # "RandomGridworld" "RandomBlockyGridworld"
 # for env_name in "RandomGridworld"  "RandomBlockyGridworld"  "AsteroidsRandomGridworld" "AsteroidsRandomBlockyGridworld" #"CarRandomGridworld"
 # for env_name in "RandomBlockyGridworld"  "AsteroidsRandomGridworld" "AsteroidsRandomBlockyGridworld" "CarRandomGridworld" "CarRandomBlockyGridworld" 
-for env_name in  "RandomGridworld"
+for env_name in  "AsteroidsRandomGridworld" "CarRandomGridworld" 
 # for env_name in "AsteroidsRandomGridworld" "AsteroidsRandomBlockyGridworld" #"CarRandomGridworld"
 # for env_name in "AsteroidsRandomGridworld" "AsteroidsRandomBlockyGridworld" "CarRandomGridworld" "CarRandomBlockyGridworld" 
 # for env_name in "TwoDoorGridworld"
+
 do
 	logfile="logging/$env_name.txt"
 	echo "" > $logfile
@@ -42,7 +44,7 @@ do
 	# if [[ $env_name  == "RandomCarGridworld" ]]; then
 	# 	gamma=$alt_gamma
 	# fi
-	command="mpirun -np 1 python -u $agent --env-name=$env_name $args --n-epochs=$epochs --ratio-offset=$offset  --gamma=$gamma --replay-k=$k"
+	command="mpirun -np 1 python -u $agent --env-name=$env_name $args --n-epochs=$epochs --ratio-offset=$offset  --gamma=$gamma --replay-k=$k --ratio-clip=$clip"
 	echo "command=$command"
 	for noise in 0 .1 .25
 	do 

@@ -40,7 +40,7 @@ else:
 	# SUCCESS_CHANCE = .15
 	# SUCCESS_CHANCE = .1
 NONBREAKING_FAILURE_CHANCE = .6
-HIGH_FAILURE_CHANCE = .75#.3
+HIGH_FAILURE_CHANCE = .7#.3
 LOW_FAILURE_CHANCE = HIGH_FAILURE_CHANCE/3
 
 break_chance = 0.0#.6
@@ -163,13 +163,13 @@ class OriginalGridworldEnv(GoalEnv):
 		# obs = self.get_obs()
 		reward = self.compute_reward(self.state_to_goal(next_state), self.goal)
 		assert type(reward) == int or type(reward) == np.int64
-		return self.get_obs(), reward, False, {"is_success": reward == 0}
+		return self.get_obs(), reward, False, {"is_success": reward == 1}
 
 		# return rv
 
 
 	def compute_reward(self, ag, dg, info=None):
-		return (ag.astype(int) == dg.astype(int)).all(axis=-1) - 1
+		return (ag.astype(int) == dg.astype(int)).all(axis=-1) - 0#1
 
 		# return 1  else 0
 

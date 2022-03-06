@@ -1,0 +1,13 @@
+
+
+running CarGridworld, 0 noise, 2-goal ratio with .11 offset
+
+running CarGridworld, 0 noise, 1-goal
+
+running CarGridworld, .1 noise, 2-goal ratio with .11 offset
+
+running CarGridworld, .1 noise, 1-goal
+
+running CarGridworld, .25 noise, 2-goal ratio with .11 offset
+
+running CarGridworld, .25 noise, 1-goal

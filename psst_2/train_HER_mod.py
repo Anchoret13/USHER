@@ -79,10 +79,11 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
         env = TimeLimit(NewCarEnv(vel_goal=False), max_episode_steps=50)
         # env = TimeLimit(CarEnvironment("CarEnvironment", time=True, vel_goal=False), max_episode_steps=50)
     elif "Gridworld" in args.env_name: 
-        # from continuous_gridworld import create_map_1, random_blocky_map, two_door_environment, random_map
-        from alt_gridworld_implementation import create_test_map, create_map_1, random_blocky_map, two_door_environment, random_map
+        # from continuous_gridworld import create_map_1#, random_blocky_map, two_door_environment, random_map
+        from alt_gridworld_implementation import create_test_map, random_blocky_map, two_door_environment, random_map #create_map_1,
         # from gridworld_reimplementation import random_map
 
+        max_steps = 50 if "Alt" in args.env_name else 20
         if args.env_name == "TwoDoorGridworld":
             env=TimeLimit(two_door_environment(), max_episode_steps=50)
         else:
@@ -96,13 +97,12 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
                 mapmaker = create_map_1
 
             if "Asteroids" in args.env_name: 
-
                 env_type="asteroids"
             elif "Car" in args.env_name:
                 env_type = "car"
             else: 
                 env_type = "linear"
-            env = TimeLimit(mapmaker(env_type=env_type), max_episode_steps=20)
+            env = TimeLimit(mapmaker(env_type=env_type), max_episode_steps=max_steps)
         # if args.env_name == "Gridworld" :
         #     env = TimeLimit(create_map_1(), max_episode_steps=50)
         # elif args.env_name == "RandomGridworld" :
@@ -257,7 +257,12 @@ if __name__ == '__main__':
         #     from HER_mod.rl_modules.t_conditioned_two_goal_usher import ddpg_agent
         # else:
         #     from HER_mod.rl_modules.two_goal_usher import ddpg_agent
-        from HER_mod.rl_modules.t_conditioned_two_goal_usher import ddpg_agent
+        # from HER_mod.rl_modules.unit_reward_usher import ddpg_agent
+
+        # from HER_mod.rl_modules.t_conditioned_two_goal_usher import ddpg_agent
+        from HER_mod.rl_modules.new_ratio_agent import ddpg_agent
+
+        # from HER_mod.rl_modules.new_ratio_unit_reward_agent import ddpg_agent
 
 
 

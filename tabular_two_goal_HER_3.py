@@ -104,10 +104,6 @@ class Q:
 		if (goal == pol_goal).all():
 			p = self.p if type(p) == type(None) else p
 			next_action = self.usher_q_table[tuple(next_state) + tuple(goal) + tuple(goal)].argmax()
-			# ratio = (
-			# 	((self.g_pi_table[tuple(state) + tuple(pol_goal)][action])*(p*gamma + (1-p*gamma)*self.usher_q_table[tuple(state) + tuple(goal) + tuple(pol_goal)][action]))/
-			# 	((self.g_pi_table[tuple(next_state) + tuple(pol_goal)][next_action])*(p*gamma + (1-p*gamma)*self.usher_q_table[tuple(next_state) + tuple(goal) + tuple(pol_goal)].max()))
-			# 	)
 			ratio = (
 				(p + (1-p)*self.usher_q_table[tuple(state) + tuple(goal) + tuple(pol_goal)][action])/
 				(p + (1-p)*self.usher_q_table[tuple(next_state) + tuple(goal) + tuple(pol_goal)].max())

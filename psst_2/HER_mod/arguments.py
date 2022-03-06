@@ -45,6 +45,7 @@ def get_args():
     parser.add_argument('--apply-ratio', action='store_true', help='whether to use USHERs ratio weighting')
     parser.add_argument('--two-goal', action='store_true', help='whether to use USHERs 2-goal  policy instead of the standard 1-goal')
     parser.add_argument('--ratio-offset', type=float, default=0.1, help='offset of ratio used in correcting HER values')
+    parser.add_argument('--ratio-clip', type=float, default=1000., help='offset of ratio used in correcting HER values')
 
 
     args = parser.parse_args()

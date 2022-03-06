@@ -1,9 +1,0 @@
-
-
-running CarRandomBlockyGridworld, 0 noise, 2-goal ratio with .05 offset
-
-running CarRandomBlockyGridworld, 0 noise, 1-goal
-
-running CarRandomBlockyGridworld, .1 noise, 2-goal ratio with .05 offset
-
-running CarRandomBlockyGridworld, .1 noise, 1-goal
