@@ -30,6 +30,8 @@ def format_method(inpt):
 		return "USHER (proposed)"
 	elif "2-goal" in inpt:
 		return "2-goal HER"
+	else: 
+		return inpt
 	assert False
 
 def parse_log(env_name):
@@ -148,7 +150,8 @@ def bar_plot(experiment_dict, name="Environment"):
 		var_list = [experiment_dict[method][key][0][2][0] - experiment_dict[method][key][0][2][1] for method in methods]
 
 		plt.bar(ticks, mean_list, yerr=var_list)
-		plt.xticks(ticks, experiment_dict.keys())
+		# plt.xticks(ticks, experiment_dict.keys())
+		plt.xticks(ticks, [format_method(method) for method in experiment_dict.keys()])
 
 
 		# plt.xlabel("Noise (fraction of maximum action)")

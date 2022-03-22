@@ -47,7 +47,7 @@ LOW_FAILURE_CHANCE = .9#HIGH_FAILURE_CHANCE/3
 break_chance = 0#.2#.6
 # BREAKING = False
 BREAKING = True
-obstacle_density = 0.2#15
+obstacle_density = 0#0.2#15
 
 transitions = { 
 	EMPTY: lambda last_state, state, dt=1: (state, False),			#Just move
@@ -247,6 +247,8 @@ def get_dynamics(env_type, size):
 		env =  SimpleDynamicsEnv(size)
 	elif env_type == "asteroids": 
 		env = AsteroidsDynamicsEnv(size)
+	elif env_type == "standard_car": 
+		env = StandardCarDynamicsEnv(size)
 	elif env_type == "car": 
 		env = CarDynamicsEnv(size)
 	else: 
@@ -447,6 +449,7 @@ class CarDynamicsEnv(AsteroidsDynamicsEnv):
 		gas = (action[0] + .5)*2/3
 		new_acceleration = gas*heading
 		# new_velocity = state['vel']*(1-self.acc_speed*dt) + new_acceleration*self.acc_speed*dt
+		# new_velocity = new_acceleration
 		# new_velocity = (new_velocity@heading)*heading
 		new_velocity = new_acceleration*heading
 		# new_velocity = np.clip(new_velocity, -1, 1)
@@ -462,6 +465,52 @@ class CarDynamicsEnv(AsteroidsDynamicsEnv):
 			}
 		return new_state
 
+
+class StandardCarDynamicsEnv(AsteroidsDynamicsEnv):
+	def __init__(self, size):
+		self.action_dim = 2
+		self.state_dim = 5
+		self.goal_dim = 2
+
+		self.acc_speed = 2
+		self.rot_speed = 5
+
+		self.size = size
+		self.translation_speed= 1#1##self.size/2
+		self.obs_low = np.array([0, 0, -1, -1, -1])
+		self.obs_high = np.array([self.size - 1, self.size-1, 1, 1, 1])
+		self.observation_space = spaces.Box(self.obs_low, self.obs_high, dtype='float32')
+		# self.action_space = Box(np.array([-1,-1,-1]), np.array([1,1,1]))
+		self.action_space = Box(np.array([-1,-1]), np.array([1,1]))
+
+		self.length = 1/self.rot_speed
+		self.wheel_max_turn = 80*(math.pi/180)#1
+
+	def dynamics(self, state, action, dt):
+		gas = (action[0] + .5)*2/3
+		turn = action[1]
+
+		new_speed = gas
+		heading = np.array([math.cos(state['rot']), math.sin(state['rot'])])
+		new_velocity = new_speed*heading
+
+		rotation_speed = new_speed/self.length*math.tan(turn*self.wheel_max_turn)
+		# new_rotation = (state['rot'] + norm(state['vel'])*turn*dt*self.rot_speed)%(2*math.pi)
+		new_rotation = (state['rot'] + rotation_speed*dt)%(2*math.pi)
+		# new_velocity = state['vel']*(1-self.acc_speed*dt) + new_acceleration*self.acc_speed*dt
+		# new_velocity = (new_velocity@heading)*heading
+		# new_velocity = np.clip(new_velocity, -1, 1)
+		vel_norm = norm(new_velocity, ord=2)
+		new_velocity = new_velocity if vel_norm <= 1 else new_velocity/(vel_norm + .0001)
+		new_position = state['pos'] + new_velocity*dt*self.translation_speed
+		assert ((new_position - state['pos'])**2).sum()**.5 <= self.translation_speed*1.00001
+
+		new_state= {
+				'pos': new_position, 
+				'vel': new_velocity, 
+				'rot': new_rotation
+			}
+		return new_state
 
 
 # # Version that the positive results were gathered with
@@ -564,20 +613,6 @@ class AltGridworldEnv(GoalEnv):
 		observation = self.get_obs()
 		# if self.high_speed_pretraining: self.broken = False
 		return observation, reward, False, {"is_success": reward == self.max_reward}
-
-	# def same_square(self, ag, dg, info=None):
-	# 	return (ag.astype(int) == dg.astype(int)).all(axis=-1) - 1
-
-
-	# def compute_reward(self, ag, dg, info=None):
-	# 	if self.randomize_start: 
-	# 		# true_threshold = 2**(-.5)#1#2
-	# 		# threshold = 2/self.size*true_threshold
-	# 		threshold = 2**(-.5)
-	# 		reward = (((ag - dg)**2).sum(axis=-1) < threshold) - 1
-	# 	else: 
-	# 		reward = self.same_square(ag,dg)
-	# 	return reward
 
 
 	def same_square(self, ag, dg, info=None):

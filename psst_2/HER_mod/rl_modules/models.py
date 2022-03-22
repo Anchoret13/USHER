@@ -94,7 +94,7 @@ class sac_actor(nn.Module):
         LOG_STD_MIN = -20
         # clip_max = 3
         clip_max = 50
-        x = torch.clip(x, -clip_max, clip_max)
+        x = torch.clamp(x, -clip_max, clip_max)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         net_out = F.relu(self.fc3(x))
@@ -194,7 +194,7 @@ class usher_critic(nn.Module):
         x = F.relu(self.fc3(x))
         q_value = self.q_out(x)
 
-        return q_value
+        return q_value + 10.
 
 
 
@@ -216,7 +216,7 @@ class T_conditioned_ratio_critic(nn.Module):
 
     def forward(self, x, T, actions, return_p=False):
         mult_val = torch.ones_like(x)
-        new_x = torch.cat([x*mult_val, T, actions / self.max_action], dim=1)
+        new_x = torch.cat([x*mult_val, T*1.0, actions / self.max_action], dim=1)
         assert new_x.shape[0] == x.shape[0] and new_x.shape[-1] == (x.shape[-1] + 1 + self.env_params['action'])
         x = new_x
         x = F.relu(self.fc1(x))
@@ -386,7 +386,7 @@ class StateValueEstimator(nn.Module):
 
     def q2time(self, q):
         # max_q = 1/(1-self.args.gamma)
-        # ratio = -.99*torch.clip(q/max_q, -1,0) #.99 for numerical stability
+        # ratio = -.99*torch.clamp(q/max_q, -1,0) #.99 for numerical stability
         return torch.log(1+q*(1-self.gamma)*.998)/torch.log(torch.tensor(self.gamma))
 
     def forward(self, o: torch.Tensor, g: torch.Tensor, norm=True): 

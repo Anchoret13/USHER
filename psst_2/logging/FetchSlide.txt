@@ -1,0 +1,5 @@
+action_noise: 0.0, 	two_goal: False, 
+	success_rate: 0.04700000070035457
+	average_reward: -30.300295782164216
+	average_initial_value: -17.28532350182533
+

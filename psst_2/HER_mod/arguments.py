@@ -21,7 +21,7 @@ def get_args():
     parser.add_argument('--noise-eps', type=float, default=0.2, help='noise eps')
     parser.add_argument('--random-eps', type=float, default=0.3, help='random eps')
     parser.add_argument('--buffer-size', type=int, default=int(1e6), help='the size of the buffer')
-    parser.add_argument('--replay-k', type=int, default=4, help='ratio to be replace')
+    parser.add_argument('--replay-k', type=float, default=4, help='ratio to be replace')
     parser.add_argument('--clip-obs', type=float, default=200, help='the clip ratio')
     parser.add_argument('--batch-size', type=int, default=256, help='the sample batch size')
     parser.add_argument('--gamma', type=float, default=0.98, help='the discount factor')

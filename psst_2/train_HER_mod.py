@@ -24,6 +24,7 @@ from pomp.planners.plantogym import PlanningEnvGymWrapper, KinomaticGymWrapper
 from pomp.example_problems.doubleintegrator import doubleIntegratorTest
 from pomp.example_problems.dubins import dubinsCarTest
 from pomp.example_problems.pendulum import pendulumTest
+
 # from pomp.example_problems.robotics.fetch.reach import FetchReachEnv
 # from pomp.example_problems.robotics.fetch.push import FetchPushEnv
 # from pomp.example_problems.robotics.fetch.slide import FetchSlideEnv
@@ -31,6 +32,7 @@ from pomp.example_problems.pendulum import pendulumTest
 
 
 # from continuous_gridworld import create_map_1, random_map
+from torus_env import Torus
 
 from gym_extensions.continuous.gym_navigation_2d.env_generator import Environment#, EnvironmentCollection, Obstacle
 
@@ -80,7 +82,8 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
         # env = TimeLimit(CarEnvironment("CarEnvironment", time=True, vel_goal=False), max_episode_steps=50)
     elif "Gridworld" in args.env_name: 
         # from continuous_gridworld import create_map_1#, random_blocky_map, two_door_environment, random_map
-        from alt_gridworld_implementation import create_test_map, random_blocky_map, two_door_environment, random_map #create_map_1,
+        # from alt_gridworld_implementation import create_test_map, random_blocky_map, two_door_environment, random_map #create_map_1,
+        from solvable_gridworld_implementation import create_test_map, random_blocky_map, two_door_environment, random_map #create_map_1,
         # from gridworld_reimplementation import random_map
 
         max_steps = 50 if "Alt" in args.env_name else 20
@@ -98,10 +101,13 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
 
             if "Asteroids" in args.env_name: 
                 env_type="asteroids"
+            elif "StandardCar" in args.env_name:
+                env_type = "standard_car"
             elif "Car" in args.env_name:
                 env_type = "car"
             else: 
                 env_type = "linear"
+            print(f"env type: {env_type}")
             env = TimeLimit(mapmaker(env_type=env_type), max_episode_steps=max_steps)
         # if args.env_name == "Gridworld" :
         #     env = TimeLimit(create_map_1(), max_episode_steps=50)
@@ -138,6 +144,20 @@ def launch(args, time=True, hooks=[], vel_goal=False, seed=True):
         env = TimeLimit(FetchPickAndPlaceEnv(), max_episode_steps=50)
     elif "ContinuousAcrobot" in args.env_name:
         env = TimeLimit(ContinuousAcrobotEnv(), max_episode_steps=50)
+    elif "Torus" in args.env_name:
+        freeze = "Freeze" in args.env_name or "freeze" in args.env_name
+        if freeze: 
+            n = args.env_name[len("TorusFreeze"):]
+        else: 
+            n = args.env_name[len("Torus"):]
+        try: 
+            dimension = int(n)
+        except:
+            print("Could not parse dimension. Using n=2")
+            dimension=2
+        print(f"Dimension = {dimension}")
+        print(f"Freeze = {freeze}")
+        env = TimeLimit(Torus(dimension, freeze), max_episode_steps=50)
     elif "2DNav" in args.env_name or "2Dnav" in args.env_name: 
         env = gym.make("Limited-Range-Based-Navigation-2d-Map4-Goal0-v0")
         env._max_episode_steps=50
@@ -261,6 +281,7 @@ if __name__ == '__main__':
 
         # from HER_mod.rl_modules.t_conditioned_two_goal_usher import ddpg_agent
         from HER_mod.rl_modules.new_ratio_agent import ddpg_agent
+        # from HER_mod.rl_modules.delta_ddpg import ddpg_agent
 
         # from HER_mod.rl_modules.new_ratio_unit_reward_agent import ddpg_agent
 

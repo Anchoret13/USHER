@@ -9,7 +9,7 @@ err_bar = lambda x, z=2: z*np.std(x)/len(x)**.5
 keylist = ["success_rate", "average_reward", "average_initial_value"]
 display_keylist = ["bias"]
 #loc = "train_her_mod_logging"
-loc = "backup_logging"
+loc = "logging"
 
 def format_name(inpt): 	
 	return ' '.join([s.capitalize() for s in inpt.split("_")])
@@ -45,14 +45,16 @@ def parse_log(env_name):
 			ratio_clip = float(ratio_clip_string[:-len("ratio_clip")])
 			# if method not in experiment_dict.keys():
 			# 	experiment_dict[method] = {key: [] for key in keylist}
-			# for key in keylist:
-			# 	# if not len(current_dict[key]) > 0:
-			# 	mean = np.mean(current_dict[key])
-			# 	list_ci = ci(current_dict[key])
-			# 	experiment_dict[method][key].append((ratio_clip, mean, list_ci))
 
 			if method not in experiment_dict.keys():
-				experiment_dict[method] = {"bias": []}
+				experiment_dict[method] = {key: [] for key in keylist}
+				experiment_dict[method]["bias"] = []
+			for key in keylist:
+				# if not len(current_dict[key]) > 0:
+				mean = np.mean(current_dict[key])
+				list_ci = ci(current_dict[key])
+				experiment_dict[method][key].append((ratio_clip, mean, list_ci))
+
 			bias = [v - r for v, r in zip(current_dict["average_initial_value"], current_dict["average_reward"])]
 			mean = np.mean(bias)
 			list_ci = ci(bias)
@@ -80,7 +82,7 @@ def plot_log(experiment_dict, name="Environment"):
 
 def line_plot(experiment_dict, name="Environment"):
 	color_list = ["red", "green", "blue", "brown", "pink"]
-	for key in display_keylist:
+	for key in display_keylist + keylist:
 		i=0
 		for method in experiment_dict.keys():
 			ratio_clip_list = [elem[0] for elem in experiment_dict[method][key]]

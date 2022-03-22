@@ -16,7 +16,7 @@ from mpi4py import MPI
 #         clip_range = self.clip_range
 #         if clip_range is None:
 #             clip_range = self.default_clip_range
-#         return NormedTensor(torch.clip((v - self.mean) / (self.std), -clip_range, clip_range))
+#         return NormedTensor(torch.clamp((v - self.mean) / (self.std), -clip_range, clip_range))
 #         # return np.clip((v - self.mean) / (self.std), -clip_range, clip_range)
 
 #     def denormalize(self, v: NormedTensor) -> Tensor:
@@ -35,7 +35,7 @@ class torch_normalizer:
         clip_range = self.clip_range
         if clip_range is None:
             clip_range = self.default_clip_range
-        return torch.clip((v - self.mean) / (self.std), -clip_range, clip_range)
+        return torch.clamp((v - self.mean) / (self.std), -clip_range, clip_range)
         return np.clip((v - self.mean) / (self.std), -clip_range, clip_range)
 
     def denormalize(self, v):

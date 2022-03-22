@@ -1,0 +1,40 @@
+
+
+running TorusFreeze2, 0 noise, 2-goal ratio with .02 offset
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.9228000000000002
+	average_reward: -10.230209639092658
+	average_initial_value: -7.8748949270457045
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.9479999999999995
+	average_reward: -9.337147220918105
+	average_initial_value: -7.7696528066903365
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.9898
+	average_reward: -10.052631485515343
+	average_initial_value: -8.663235660225158
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.9817999999999998
+	average_reward: -10.502421682314461
+	average_initial_value: -8.071293083983658
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.9325999999999994
+	average_reward: -9.46598332995967
+	average_initial_value: -8.604039102953672
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.9457999999999995
+	average_reward: -11.100132191100307
+	average_initial_value: -8.495881097853186
+
+action_noise: 0.0, 	two_goal: True, 
+	success_rate: 0.9955999999999997
+	average_reward: -10.486098175737407
+	average_initial_value: -7.853335434281826
+
+
+running TorusFreeze2, 0 noise, 2-goal

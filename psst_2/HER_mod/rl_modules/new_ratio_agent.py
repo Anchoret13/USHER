@@ -127,6 +127,7 @@ class ValueEstimator:
             target_p_value = target_p_value.detach()
             target_p_value = torch.clamp(target_p_value, -clip_return, 0)
         else: 
+            # target_p_value = 1/t*((1-her_used)*1/(self.args.replay_k + 1) + exact_goal_tensor*self.args.replay_k/(self.args.replay_k + 1)) + p_next_value*(t-1)/t
             target_p_value = 1/t*((1-her_used)*1/(self.args.replay_k + 1) + exact_goal_tensor*self.args.replay_k/(self.args.replay_k + 1)) + p_next_value*(t-1)/t
             target_p_value = target_p_value.detach()
             # target_p_value = torch.clamp(target_p_value, 0, 1)
@@ -154,7 +155,7 @@ class ValueEstimator:
         # true_ratio = p_num/p_denom
         true_ratio = (true_c+(1-true_c)*p_num)/(true_c+(1-true_c)*p_denom)
         clip_scale = 1+self.args.ratio_clip#1.4
-        true_ratio = torch.clip(true_ratio, 1/clip_scale, clip_scale)
+        true_ratio = torch.clamp(true_ratio, 1/clip_scale, clip_scale)
 
         critic_loss = (true_ratio*((target_q_value - q0).pow(2))).mean() + (target_p_value - p0).pow(2).mean()*clip_return
         # critic_loss = critic_loss + 

@@ -211,7 +211,7 @@ class ddpg_agent:
         # sample the episodes
         transitions = self.buffer.sample(self.args.batch_size)
         # pre-process the observation and goal
-        transitions['policy_g'] = transitions['g']
+        # transitions['policy_g'] = transitions['g']
         gscale = 1
 
         o, o_next  = transitions['obs'], transitions['obs_next']

@@ -20,7 +20,7 @@ from pomp.example_problems.pendulum import pendulumTest#type: ignore
 from pomp.example_problems.gym_pendulum_baseenv import PendulumGoalEnv#type: ignore
 
 # from pomp.example_problems.robotics.fetch.reach import FetchReachEnv#type: ignore
-# from pomp.example_problems.robotics.fetch.push import FetchPushEnv#type: ignore
+from pomp.example_problems.robotics.fetch.push import FetchPushEnv#type: ignore
 # from pomp.example_problems.robotics.fetch.slide import FetchSlideEnv#type: ignore
 # from pomp.example_problems.robotics.fetch.pick_and_place import FetchPickAndPlaceEnv#type: ignore
 
@@ -86,10 +86,12 @@ def launch(args):
     elif args.env_name == "HandReach":
         env = TimeLimit(HandReachEnv(), max_episode_steps=10)
     elif "Gridworld" in args.env_name: 
-        from continuous_gridworld import create_map_1, random_map, random_blocky_map, two_door_environment
-        from alt_gridworld_implementation import create_test_map#, create_map_1, random_blocky_map, two_door_environment#, random_map
+        # from continuous_gridworld import create_map_1#, random_blocky_map, two_door_environment, random_map
+        # from alt_gridworld_implementation import create_test_map, random_blocky_map, two_door_environment, random_map #create_map_1,
+        from solvable_gridworld_implementation import create_test_map, random_blocky_map, two_door_environment, random_map #create_map_1,
         # from gridworld_reimplementation import random_map
 
+        max_steps = 50 if "Alt" in args.env_name else 20
         if args.env_name == "TwoDoorGridworld":
             env=TimeLimit(two_door_environment(), max_episode_steps=50)
         else:
@@ -103,13 +105,15 @@ def launch(args):
                 mapmaker = create_map_1
 
             if "Asteroids" in args.env_name: 
-
                 env_type="asteroids"
+            elif "StandardCar" in args.env_name:
+                env_type = "standard_car"
             elif "Car" in args.env_name:
                 env_type = "car"
             else: 
                 env_type = "linear"
-            env = TimeLimit(mapmaker(env_type=env_type), max_episode_steps=50)
+            print(f"env type: {env_type}")
+            env = TimeLimit(mapmaker(env_type=env_type), max_episode_steps=max_steps)
     elif "ContinuousAcrobot" in args.env_name:
         env = TimeLimit(ContinuousAcrobotEnv(), max_episode_steps=50)
     elif "2DNav" in args.env_name or "2Dnav" in args.env_name: 

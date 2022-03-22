@@ -31,7 +31,7 @@ class actor(nn.Module):
 
     def forward(self, x, with_logprob = False, deterministic = False, forced_exploration=1):
         # with_logprob = False
-        x = torch.clip(x, -clip_max, clip_max)
+        x = torch.clamp(x, -clip_max, clip_max)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         net_out = F.relu(self.fc3(x))
