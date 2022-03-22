@@ -1,0 +1,4 @@
+
+
+running CarRandomGridworld, 0 noise, 2-goal ratio with .01 offset
+action_noise: 0.0, 	two_goal: False, 	success_rate: 0.05587500000000001

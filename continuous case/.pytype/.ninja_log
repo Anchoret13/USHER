@@ -1,0 +1,18 @@
+# ninja log v5
+0	795	1644266287437148511	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/her_types.pyi	a991f81e450fc90
+795	1412	1644266288081171503	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/her_modules/usher.pyi	a7cddb81ec1ab088
+1412	2061	1644266288729194611	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/rl_modules/alternate_sac_actor.pyi	eeebf2ad83301968
+2062	3630	1644266290173246052	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/rl_modules/usher_models.pyi	ced31bd32d178841
+3630	4343	1644266291005275653	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/rl_modules/replay_buffer.pyi	fc4b2e9ce81b013
+4343	5064	1644266291737301667	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/mpi_utils/normalizer.pyi	ea8ae6938dfe5342
+5064	5656	1644266292329322690	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/mpi_utils/mpi_utils.pyi	5f8212e8df6744b1
+5656	6457	1644266293097349947	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/arguments.pyi	56971ba4aa2d0ec9
+6457	7827	1644266294397396019	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/rl_modules/typed_usher_with_ratio.pyi	36ced4ec104317e7
+7827	8424	1644266295101420944	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/minimal_train.pyi	98c5e2e2408f2e6d
+0	583	1644266364627784863	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/minimal_train.pyi	28232252f46c2fdb
+0	1433	1644266522312528624	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/rl_modules/typed_usher_with_ratio.pyi	36ced4ec104317e7
+1433	2076	1644266523052549150	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/minimal_train.pyi	98c5e2e2408f2e6d
+0	1392	1644266618003068410	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/rl_modules/typed_usher_with_ratio.pyi	36ced4ec104317e7
+1392	2027	1644266618735087004	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/minimal_train.pyi	98c5e2e2408f2e6d
+0	1638	1644266816707732112	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/HER/rl_modules/typed_usher_with_ratio.pyi	36ced4ec104317e7
+1638	2301	1644266817519749779	/home/liam/Desktop/usher_repo/USHER/psst/.pytype/pyi/minimal_train.pyi	98c5e2e2408f2e6d
