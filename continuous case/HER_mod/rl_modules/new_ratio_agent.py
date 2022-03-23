@@ -16,8 +16,6 @@ from HER_mod.rl_modules.replay_buffer import replay_buffer
 # from HER_mod.rl_modules.models import actor
 from HER_mod.rl_modules.models import sac_actor as actor
 from HER_mod.rl_modules.models import T_conditioned_ratio_critic as critic
-from HER_mod.rl_modules.value_map import *
-from HER_mod.rl_modules.velocity_env import *
 from HER_mod.rl_modules.hyperparams import POS_LIMIT
 
 import pdb

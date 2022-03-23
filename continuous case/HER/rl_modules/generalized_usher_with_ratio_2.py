@@ -300,6 +300,7 @@ class ddpg_agent:
             addon[transitions['her_used']] *= 0
             true_ratio = (true_c+addon+p_num)/(true_c+addon+p_denom)
             # ratio[transitions['her_used']] = true_ratio
+            torch.clamp(true_ratio, min=1/(1+self.args.ratio_clip), max=1+self.args.ratio_clip)
             ratio = true_ratio.detach() #+ addon
             critic_loss = (ratio*((target_q_value - q0).pow(2))).mean() + (target_p_value - p0).pow(2).mean()*clip_return
         else: 

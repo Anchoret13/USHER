@@ -14,6 +14,7 @@ from gym_extensions.continuous.gym_navigation_2d.env_generator import Environmen
 
 from environments.velocity_env import MultiGoalEnvironment, CarEnvironment
 from environments.car_env import RotationEnv, NewCarEnv, SimpleMovementEnvironment
+from environments.torus_env import Torus
 # from environments.continuous_acrobot import ContinuousAcrobotEnv
 
 import pickle
